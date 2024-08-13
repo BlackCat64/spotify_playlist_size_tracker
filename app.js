@@ -251,20 +251,25 @@ const APIController = (function() {
         // sort the tracks by the date they were added
 
         // define an array which stores data for each track, in an object
-        let trackData = new Array(numTracks);
+        let displayData = new Array(numTracks);
+        let chartData = new Array(numTracks);
 
         let html = `<h1>${list.name}</h1><br>`;
         for (let i = 0; i < numTracks; i++) {
             let track = tracks[i];
-            trackData[i] = {
+            displayData[i] = {
                 name: getTrackURL(track.track),
                 artists: getTrackArtists(track.track),
                 date: formatDate(track.added_at)
-            }; // add custom object to array of track data
+            };
+            chartData[i] = {
+                x: track.added_at,
+                y: (i+1)
+            }
 
-            html += `<pre>${(i+1).toString().padStart(4, " ").padEnd(6, " ")} | ${trackData[i].name} - ${trackData[i].artists} : ${trackData[i].date}</pre>`;
+            html += `<pre>${(i+1).toString().padStart(4, " ").padEnd(6, " ")} | ${displayData[i].name} - ${displayData[i].artists} : ${displayData[i].date}</pre>`;
         }
-        res.send(html); // display a list of all tracks, with the date+time they were added to the list
+        res.json(chartData); // display a list of all tracks, with the date+time they were added to the list
     });
 
     app.listen(5000, () => {
