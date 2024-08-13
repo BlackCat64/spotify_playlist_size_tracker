@@ -76,7 +76,7 @@ const APIController = (function() {
         return result;
     };
 
-    const getUserPlaylists = async (userID) => {
+    const getUserPlaylists = async () => {
         const result = await fetch(apiBaseURL + `me/playlists`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${session.access_token}`}
