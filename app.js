@@ -263,7 +263,8 @@ const APIController = (function() {
 
         res.render("display.ejs", {
                 list_name: list.name,
-                displayData: displayData
+                displayData: displayData,
+                num_tracks: numTracks
         });
     });
 
