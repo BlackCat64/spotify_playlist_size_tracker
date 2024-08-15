@@ -152,6 +152,7 @@ const APIController = (function() {
 
     // START OF APP EXECUTION
     const app = express(); // use ExpressJS
+    app.set('view engine', 'ejs'); // use EJS files
 
     // login page - redirects to spotify login
     app.get('/login', (req, res) => {
@@ -168,7 +169,7 @@ const APIController = (function() {
                 scope: scope,
                 redirect_uri: redirectURI,
                 state: state,
-                show_dialog: true // DEBUG - Always show the login dialog, even when already logged into an account
+                // show_dialog: true // DEBUG - Always show the login dialog, even when already logged into an account
             }));
     });
 
@@ -257,7 +258,7 @@ const APIController = (function() {
         let html = `<h1>${list.name}</h1><br>`;
         for (let i = 0; i < numTracks; i++) {
             let track = tracks[i];
-            displayData[i] = {
+            displayData[i] = { // prepare data for displaying list of songs
                 name: getTrackURL(track.track),
                 artists: getTrackArtists(track.track),
                 date: formatDate(track.added_at)
@@ -266,16 +267,7 @@ const APIController = (function() {
                 x: track.added_at,
                 y: (i+1)
             }
-
-            html += `<pre>${(i+1).toString().padStart(4, " ").padEnd(6, " ")} | ${displayData[i].name} - ${displayData[i].artists} : ${displayData[i].date}</pre>`;
         }
-        // res.json(chartData);
-        // res.send(html); // display a list of all tracks, with the date+time they were added to the list
-        res.render("display.ejs", {
-            list_name: list.name,
-            displayData: displayData
-        });
-        return;
 
         const data = {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
@@ -306,6 +298,12 @@ const APIController = (function() {
                 }
             },
         };
+
+        res.render("display.ejs", {
+                list_name: list.name,
+                displayData: displayData,
+                chart_config: config
+        });
     });
 
     app.listen(5000, () => {
