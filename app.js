@@ -255,7 +255,6 @@ const APIController = (function() {
         let displayData = new Array(numTracks);
         let chartData = new Array(numTracks);
 
-        let html = `<h1>${list.name}</h1><br>`;
         for (let i = 0; i < numTracks; i++) {
             let track = tracks[i];
             displayData[i] = { // prepare data for displaying list of songs
@@ -280,4 +279,6 @@ const APIController = (function() {
     });
 
     return 0; // stops annoying intelliJ warning
-})();
+});
+
+APIController();
