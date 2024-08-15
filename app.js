@@ -269,40 +269,9 @@ const APIController = (function() {
             }
         }
 
-        const data = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            datasets: [
-                {
-                    label: 'Dataset 1',
-                    data: [1, 4, 3, 6, 5, 2, 9],
-                    borderColor: 'rgba(75, 192, 192)',
-                    borderWidth: 2,
-                    backgroundColor: 'rgba(0, 0, 0, 0)',
-                }
-            ]
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Chart.js Line Chart'
-                    }
-                }
-            },
-        };
-
         res.render("display.ejs", {
                 list_name: list.name,
-                displayData: displayData,
-                chart_config: config
+                displayData: displayData
         });
     });
 
