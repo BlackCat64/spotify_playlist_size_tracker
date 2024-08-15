@@ -168,7 +168,7 @@ const APIController = (function() {
                 scope: scope,
                 redirect_uri: redirectURI,
                 state: state,
-                // show_dialog: true // DEBUG - Always show the login dialog, even when already logged into an account
+                show_dialog: true // DEBUG - Always show the login dialog, even when already logged into an account
             }));
     });
 
@@ -262,14 +262,45 @@ const APIController = (function() {
                 artists: getTrackArtists(track.track),
                 date: formatDate(track.added_at)
             };
-            chartData[i] = {
+            chartData[i] = { // prepare data to be displayed on a chart
                 x: track.added_at,
                 y: (i+1)
             }
 
             html += `<pre>${(i+1).toString().padStart(4, " ").padEnd(6, " ")} | ${displayData[i].name} - ${displayData[i].artists} : ${displayData[i].date}</pre>`;
         }
-        res.json(chartData); // display a list of all tracks, with the date+time they were added to the list
+        // res.json(chartData);
+        // res.send(html); // display a list of all tracks, with the date+time they were added to the list
+
+        const data = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [
+                {
+                    label: 'Dataset 1',
+                    data: [1, 4, 3, 6, 5, 2, 9],
+                    borderColor: 'rgba(75, 192, 192)',
+                    borderWidth: 2,
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                }
+            ]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Chart.js Line Chart'
+                    }
+                }
+            },
+        };
     });
 
     app.listen(5000, () => {
