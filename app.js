@@ -271,6 +271,11 @@ const APIController = (function() {
         }
         // res.json(chartData);
         // res.send(html); // display a list of all tracks, with the date+time they were added to the list
+        res.render("display.ejs", {
+            list_name: list.name,
+            displayData: displayData
+        });
+        return;
 
         const data = {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
