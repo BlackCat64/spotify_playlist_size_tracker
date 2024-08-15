@@ -213,19 +213,12 @@ const APIController = (function() {
 
         const playlists = playlistsData.items;
 
-        let html = "";
-        for (let i = 0; i < playlists.length; i++) {
-            const list = playlists[i];
-            html += `<a href="/display?id=${list.id}">${list.name}</a> - ${list.tracks.total}<br>`;
-            // embed a clickable link in each playlist's name
-        }
-
         if (playlists.error) { // if there is some sort of error, return to the login page
             res.redirect('/login');
             return; // ALWAYS RETURN after using res, to avoid header errors!
         }
 
-        res.send(html); // render html
+        res.render("list.ejs", { playlists: playlists}); // render html (dynamically)
     });
 
     app.get('/display', async (req, res) => {
