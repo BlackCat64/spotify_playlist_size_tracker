@@ -21,6 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
     <script>
+
         const ctx = document.getElementById('chart');
 
         const json_data = <%- JSON.stringify(chart_data) %>
@@ -48,18 +49,32 @@
                     type: 'line',
                     data: data,
                     options: {
+                        interaction: {
+                            mode: 'y'
+                        },
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const track = tooltip_data[elements[0].index]; // get the selected track
+                                console.log(JSON.stringify(track));
+                                window.open('about:blank', '_blank'); // redirect to the song's page on spotify
+                            }
+                        },
                         plugins: {
                           tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    if (context.parsed.y !== null) {
+                                beforeLabel: (context) => {
+                                    if (context.parsed) {
                                         let data = tooltip_data[context.parsed.y - 1];
                                         return `${data.name} - ${data.artists}`;
                                     }
                                 },
-                                afterLabel: (context) => {
+                                label: (context) => {
                                     if (context.parsed)
                                         return '#' + context.parsed.y;
+                                },
+                                afterLabel: (context) => {
+                                    if (context.parsed)
+                                        return 'Click to Listen on Spotify';
                                 }
                             }
                           }
