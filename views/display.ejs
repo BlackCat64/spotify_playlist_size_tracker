@@ -7,8 +7,8 @@
 <body>
     <h1><%= list_name %></h1><br>
 
-    <div>
-        <canvas id="chart" style="width: 50%; height: 50%;"></canvas>
+    <div style="width: 75%; height: 75%;">
+        <canvas id="chart"></canvas>
     </div>
 
     <h2>Tracks:</h2>
@@ -26,8 +26,10 @@
         const json_data = <%- JSON.stringify(chart_data) %>
 
         const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
-        const minDate = new Date(Math.min.apply(null, dates));
-        const maxDate = new Date(Math.max.apply(null, dates)); // get bounds for the date axis
+        let minDate = new Date(Math.min.apply(null, dates));
+        let maxDate = new Date(Math.max.apply(null, dates)); // get bounds for the date axis
+        minDate = minDate.setHours(0, 0, 0, 0);
+        maxDate = maxDate.setHours(24, 0, 0, 0); // slightly widen bounds, to increase readability
 
         const data = {
                     labels: <%- JSON.stringify(track_names) %>,
@@ -61,8 +63,8 @@
                                     display: true,
                                     text: 'Date'
                                 },
-                                min: minDate.toISOString(),
-                                max: maxDate.toISOString()
+                                min: minDate,
+                                max: maxDate
                             },
                             y: {
                                 title: {
