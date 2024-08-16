@@ -27,9 +27,9 @@
 
         const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
         let minDate = new Date(Math.min.apply(null, dates));
-        let maxDate = new Date(Math.max.apply(null, dates)); // get bounds for the date axis
-        minDate = minDate.setHours(0, 0, 0, 0);
-        maxDate = maxDate.setHours(24, 0, 0, 0); // slightly widen bounds, to increase readability
+        let maxDate = new Date(Math.max.apply(null, dates));
+        minDate = new Date(minDate.getTime() - 0.05 * (maxDate - minDate));
+        maxDate = Date.now();
 
         const data = {
                     labels: <%- JSON.stringify(track_names) %>,
@@ -48,7 +48,6 @@
                     type: 'line',
                     data: data,
                     options: {
-                        responsive: true,
                         scales: {
                             x: {
                                 type: 'time',
