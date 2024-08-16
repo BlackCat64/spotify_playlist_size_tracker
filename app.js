@@ -247,6 +247,7 @@ const APIController = (function() {
         // define an array which stores data for each track, in an object
         let displayData = new Array(numTracks);
         let chartData = new Array(numTracks);
+        let nameLabels = new Array(numTracks);
 
         for (let i = 0; i < numTracks; i++) {
             let track = tracks[i];
@@ -258,13 +259,16 @@ const APIController = (function() {
             chartData[i] = { // prepare data to be displayed on a chart
                 x: track.added_at,
                 y: (i+1)
-            }
+            };
+            nameLabels[i] = track.track.name.toString(); // prepare labels
         }
 
         res.render("display.ejs", {
                 list_name: list.name,
-                displayData: displayData,
-                num_tracks: numTracks
+                track_names: nameLabels,
+                display_data: displayData,
+                num_tracks: numTracks,
+                chart_data: chartData
         });
     });
 

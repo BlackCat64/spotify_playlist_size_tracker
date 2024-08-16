@@ -12,8 +12,8 @@
     </div>
 
     <h2>Tracks:</h2>
-    <% for (var i = 0; i < displayData.length; i++) { %>
-    <%- (i+1).toString().padStart(4, "⠀").padEnd(6, "⠀") %> | <%- displayData[i].name %> - <%- displayData[i].artists %> : <%= displayData[i].date %><br>
+    <% for (var i = 0; i < display_data.length; i++) { %>
+    <%- (i+1).toString().padStart(4, "⠀").padEnd(6, "⠀") %> | <%- display_data[i].name %> - <%- display_data[i].artists %> : <%= display_data[i].date %><br>
     <% } %>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,8 +23,9 @@
     <script>
         const ctx = document.getElementById('chart');
 
+
         const data = {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    labels: <%- JSON.stringify(track_names) %>,
                     datasets: [
                         {
                             label: 'Playlist Size',
