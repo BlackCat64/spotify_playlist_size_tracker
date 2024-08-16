@@ -24,6 +24,7 @@
         const ctx = document.getElementById('chart');
 
         const json_data = <%- JSON.stringify(chart_data) %>
+        const tooltip_data = <%- JSON.stringify(tooltip_data) %>
 
         const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
         let minDate = new Date(Math.min.apply(null, dates));
@@ -32,7 +33,6 @@
         maxDate = Date.now();
 
         const data = {
-                    labels: <%- JSON.stringify(track_names) %>,
                     datasets: [
                         {
                             label: 'Playlist Size',
@@ -48,6 +48,22 @@
                     type: 'line',
                     data: data,
                     options: {
+                        plugins: {
+                          tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.parsed.y !== null) {
+                                        let data = tooltip_data[context.parsed.y - 1];
+                                        return `${data.name} - ${data.artists}`;
+                                    }
+                                },
+                                afterLabel: (context) => {
+                                    if (context.parsed)
+                                        return '#' + context.parsed.y;
+                                }
+                            }
+                          }
+                        },
                         scales: {
                             x: {
                                 type: 'time',

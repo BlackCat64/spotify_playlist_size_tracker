@@ -123,11 +123,13 @@ const APIController = (function() {
         return allTracks; // return object containing list of tracks
     }
 
-    const getTrackArtists = (track) => {
+    const getTrackArtists = (track, showURL) => {
         let str = "";
         for (let artist of track.artists) {
-            str += `${getArtistURL(artist)}, `;
-        } // embed a clickable link to the artist's page on Spotify
+            if (showURL)
+                str += `${getArtistURL(artist)}, `;
+            else str += `${artist.name}, `;
+        } // embed a clickable link to the artist's page on Spotify, if enabled
         return str.substring(0, str.length - 2); // return a comma-separated list of a track's artists
     }
 
@@ -244,8 +246,9 @@ const APIController = (function() {
         tracks.sort((a,b) => new Date(a.added_at) - new Date(b.added_at));
         // sort the tracks by the date they were added
 
-        // define an array which stores data for each track, in an object
+        // store various data for each track, in parallel arrays
         let displayData = new Array(numTracks);
+        let tooltipData = new Array(numTracks);
         let chartData = new Array(numTracks);
         let nameLabels = new Array(numTracks);
 
@@ -253,8 +256,12 @@ const APIController = (function() {
             let track = tracks[i];
             displayData[i] = { // prepare data for displaying list of songs
                 name: getTrackURL(track.track),
-                artists: getTrackArtists(track.track),
+                artists: getTrackArtists(track.track, true),
                 date: formatDate(track.added_at)
+            };
+            tooltipData[i] = { // prepare data for point hover tooltips
+                name: track.track.name,
+                artists: getTrackArtists(track.track, false)
             };
             chartData[i] = { // prepare data to be displayed on a chart
                 x: track.added_at,
@@ -267,6 +274,7 @@ const APIController = (function() {
                 list_name: list.name,
                 track_names: nameLabels,
                 display_data: displayData,
+                tooltip_data: tooltipData,
                 num_tracks: numTracks,
                 chart_data: chartData
         });
