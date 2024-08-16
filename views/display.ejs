@@ -23,13 +23,18 @@
     <script>
         const ctx = document.getElementById('chart');
 
+        const json_data = <%- JSON.stringify(chart_data) %>
+
+        const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
+        const minDate = new Date(Math.min.apply(null, dates));
+        const maxDate = new Date(Math.max.apply(null, dates)); // get bounds for the date axis
 
         const data = {
                     labels: <%- JSON.stringify(track_names) %>,
                     datasets: [
                         {
                             label: 'Playlist Size',
-                            data: [1, 4, 3, 6, 5, 2, 9],
+                            data: json_data,
                             borderColor: 'rgba(255, 61, 61)',
                             borderWidth: 2,
                             backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -42,22 +47,22 @@
                     data: data,
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
                         scales: {
                             x: {
                                 type: 'time',
                                 time: {
-                                    tooltipFormat: 'DD/MM/YY',
-                                    unit: 'day'
+                                    tooltipFormat: 'DD T',
+                                    minUnit: 'day',
+                                    displayFormats: {
+                                        day: 'dd/MM/yy'
+                                    }
                                 },
                                 title: {
                                     display: true,
                                     text: 'Date'
-                                }
+                                },
+                                min: minDate.toISOString(),
+                                max: maxDate.toISOString()
                             },
                             y: {
                                 title: {
