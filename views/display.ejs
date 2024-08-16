@@ -26,6 +26,7 @@
 
         const json_data = <%- JSON.stringify(chart_data) %>
         const tooltip_data = <%- JSON.stringify(tooltip_data) %>
+        const track_links = <%- JSON.stringify(track_links) %>
 
         const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
         let minDate = new Date(Math.min.apply(null, dates));
@@ -50,13 +51,12 @@
                     data: data,
                     options: {
                         interaction: {
-                            mode: 'y'
+                            mode: 'nearest'
                         },
                         onClick: (event, elements) => {
                             if (elements.length > 0) {
-                                const track = tooltip_data[elements[0].index]; // get the selected track
-                                console.log(JSON.stringify(track));
-                                window.open('about:blank', '_blank'); // redirect to the song's page on spotify
+                                const index = elements[0].index; // get selected track no.
+                                window.open(track_links[index], '_blank'); // redirect to the song's page on spotify
                             }
                         },
                         plugins: {

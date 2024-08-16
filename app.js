@@ -250,7 +250,7 @@ const APIController = (function() {
         let displayData = new Array(numTracks);
         let tooltipData = new Array(numTracks);
         let chartData = new Array(numTracks);
-        let nameLabels = new Array(numTracks);
+        let trackLinks = new Array(numTracks)
 
         for (let i = 0; i < numTracks; i++) {
             let track = tracks[i];
@@ -267,14 +267,14 @@ const APIController = (function() {
                 x: track.added_at,
                 y: (i+1)
             };
-            nameLabels[i] = track.track.name.toString(); // prepare labels
+            trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
         }
 
         res.render("display.ejs", {
                 list_name: list.name,
-                track_names: nameLabels,
                 display_data: displayData,
                 tooltip_data: tooltipData,
+                track_links: trackLinks,
                 num_tracks: numTracks,
                 chart_data: chartData
         });
