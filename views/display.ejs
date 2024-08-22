@@ -10,6 +10,11 @@
     <div style="width: 75%; height: 75%;">
         <canvas id="chart"></canvas>
     </div>
+    <div id="chart_options">
+        <label>
+            <input type="checkbox" id="change_end_date"> X-Axis ends at Last Added Track
+        </label>
+    </div>
 
     <h2>Tracks:</h2>
     <% for (var i = 0; i < display_data.length; i++) { %>
@@ -21,19 +26,29 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
     <script>
+        // define functions first
+        const setMaxDate = (boxChecked, minDate, maxDate) => {
+        if (boxChecked)
+            return new Date(maxDate + 0.05 * (maxDate - minDate));
+        else return Date.now();
+        }
 
-        const ctx = document.getElementById('chart');
+        // get document elements
+        const canvas = document.getElementById('chart');
+        const box = document.getElementById('change_end_date');
 
         const json_data = <%- JSON.stringify(chart_data) %>
         const tooltip_data = <%- JSON.stringify(tooltip_data) %>
         const track_links = <%- JSON.stringify(track_links) %>
 
-        const dates = json_data.map(d => new Date(d.x)); // get an array containing only the dates
+        // format the date axis correctly
+        const dates = json_data.map(d => new Date(d.x));
         let minDate = new Date(Math.min.apply(null, dates));
         let maxDate = new Date(Math.max.apply(null, dates));
         minDate = new Date(minDate.getTime() - 0.05 * (maxDate - minDate));
-        maxDate = Date.now();
+        let axisEnd = setMaxDate(box.checked, minDate, maxDate);
 
+        // setup chart data and config objects
         const data = {
                     datasets: [
                         {
@@ -46,85 +61,123 @@
                     ]
                 };
 
-                const config = {
-                    type: 'line',
-                    data: data,
-                    options: {
-                        interaction: {
-                            mode: 'nearest'
-                        },
-                        onClick: (event, elements) => {
-                            if (elements.length > 0) {
-                                const index = elements[0].index; // get selected track no.
-                                window.open(track_links[index], '_blank'); // redirect to the song's page on spotify
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                interaction: {
+                    mode: 'nearest'
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index; // get selected track no.
+                        if (index < <%= num_tracks %>)
+                            window.open(track_links[index], '_blank'); // redirect to the song's page on spotify
+                    }
+                },
+                plugins: {
+                  tooltip: {
+                    callbacks: {
+                        beforeLabel: (context) => {
+                            if (context.parsed) {
+                                let data;
+                                // if the x-axis ends at Now, display correct tooltip for the 'as of now' item
+                                if (context.parsed.y > <%= num_tracks %>) // this is done by detecting an item with a slightly higher y-value
+                                    data = tooltip_data[<%= num_tracks %>];
+                                else data = tooltip_data[context.parsed.y - 1];
+                                return `${data.name} - ${data.artists}`;
                             }
                         },
-                        plugins: {
-                          tooltip: {
-                            callbacks: {
-                                beforeLabel: (context) => {
-                                    if (context.parsed) {
-                                        let data = tooltip_data[context.parsed.y - 1];
-                                        return `${data.name} - ${data.artists}`;
-                                    }
-                                },
-                                label: (context) => {
-                                    if (context.parsed)
-                                        return '#' + context.parsed.y;
-                                },
-                                afterLabel: (context) => {
-                                    if (context.parsed)
-                                        return 'Click to Listen on Spotify';
-                                }
+                        label: (context) => {
+                            if (context.parsed) {
+                                if (context.parsed.y <= <%= num_tracks %>)
+                                    return '#' + context.parsed.y;
+                                else return '';
                             }
-                          }
                         },
-                        scales: {
-                            x: {
-                                type: 'time',
-                                time: {
-                                    tooltipFormat: 'DD T',
-                                    minUnit: 'day',
-                                    displayFormats: {
-                                        day: 'dd/MM/yy'
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Date',
-                                    font: {
-                                        size: 20,
-                                        weight: 'bold',
-                                        lineHeight: 1.2
-                                    },
-                                    padding: {top: 10, left: 0, right: 0, bottom: 0}
-
-                                },
-                                min: minDate,
-                                max: maxDate
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'No. of Tracks',
-                                    font: {
-                                        size: 20,
-                                        weight: 'bold',
-                                        lineHeight: 1.2
-                                    },
-                                    padding: {top: 0, left: 0, right: 20, bottom: 0}
-                                },
-                                min: 0,
-                                max: <%= Math.ceil(num_tracks / 10) * 10 %>,
-                                ticks: {
-                                    stepSize: <%= Math.ceil(num_tracks / 10) %>
-                                }
+                        afterLabel: (context) => {
+                            if (context.parsed) {
+                                if (context.parsed.y <= <%= num_tracks %>)
+                                    return 'Click to Listen on Spotify';
                             }
                         }
                     }
-                };
+                  }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'DD T',
+                            minUnit: 'day',
+                            displayFormats: {
+                                day: 'dd/MM/yy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            font: {
+                                size: 20,
+                                weight: 'bold',
+                                lineHeight: 1.2
+                            },
+                            padding: {top: 10, left: 0, right: 0, bottom: 0}
 
-        new Chart(ctx, config);
+                        },
+                        min: minDate,
+                        max: axisEnd
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'No. of Tracks',
+                            font: {
+                                size: 20,
+                                weight: 'bold',
+                                lineHeight: 1.2
+                            },
+                            padding: {top: 0, left: 0, right: 20, bottom: 0}
+                        },
+                        min: 0,
+                        max: <%= Math.ceil(num_tracks / 10) * 10 %>,
+                        ticks: {
+                            stepSize: <%= Math.ceil(num_tracks / 10) %>
+                        }
+                    }
+                }
+            }
+        };
+        let chart = new Chart(canvas, config); // display chart
+
+        box.addEventListener('change', function() { // listen for checkbox changes
+            axisEnd = setMaxDate(this.checked, minDate, maxDate);
+
+            if (this.checked) {
+                if (tooltip_data[tooltip_data.length - 1].name === "Size as of Now") {
+                    tooltip_data.pop();
+                    json_data.pop();
+                }
+            }
+            else {
+                if (tooltip_data[tooltip_data.length - 1].name !== "Size as of Now") {
+                    tooltip_data.push({
+                        "name": "Size as of Now",
+                        "artists": <%= num_tracks %>
+                    });
+                    json_data.push({
+                        "x": Date.now(),
+                        "y": <%= num_tracks + 0.001 %>
+                    })
+                }
+            }
+
+            // finally, set data values in the chart object
+            chart.data.datasets[0].data = json_data;
+            chart.config.options.scales.x.max = axisEnd;
+
+            chart.update();
+        });
     </script>
 </body>
 </html>

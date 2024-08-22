@@ -270,6 +270,9 @@ const APIController = (function() {
             trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
         }
 
+        chartData.push({ x: Date.now(), y: (numTracks+0.001) }); // make sure the size 'as of now' is displayed initially
+        tooltipData.push({name: "Size as of Now", artists: numTracks});
+
         res.render("display.ejs", {
                 list_name: list.name,
                 display_data: displayData,
