@@ -45,8 +45,11 @@
         const dates = json_data.map(d => new Date(d.x));
         let minDate = new Date(Math.min.apply(null, dates));
         let maxDate = new Date(Math.max.apply(null, dates));
-        minDate = new Date(minDate.getTime() - 0.05 * (maxDate - minDate));
-        let axisEnd = setMaxDate(box.checked, minDate, maxDate);
+
+        let axisEnd = Date.now(); // end the axis at Now by default (the checkbox changes this)
+        let range = axisEnd - minDate;
+
+        let axisStart = new Date(minDate - (0.05 * range));
 
         // setup chart data and config objects
         const data = {
@@ -125,7 +128,7 @@
                             padding: {top: 10, left: 0, right: 0, bottom: 0}
 
                         },
-                        min: minDate,
+                        min: axisStart,
                         max: axisEnd
                     },
                     y: {
@@ -151,7 +154,9 @@
         let chart = new Chart(canvas, config); // display chart
 
         box.addEventListener('change', function() { // listen for checkbox changes
-            axisEnd = setMaxDate(this.checked, minDate, maxDate);
+            axisEnd = setMaxDate(this.checked, minDate, maxDate); // change date axes
+            let range = axisEnd - minDate;
+            axisStart = new Date(minDate - (0.05 * range));
 
             if (this.checked) {
                 if (tooltip_data[tooltip_data.length - 1].name === "Size as of Now") {
@@ -174,6 +179,7 @@
 
             // finally, set data values in the chart object
             chart.data.datasets[0].data = json_data;
+            chart.config.options.scales.x.min = axisStart;
             chart.config.options.scales.x.max = axisEnd;
 
             chart.update();
