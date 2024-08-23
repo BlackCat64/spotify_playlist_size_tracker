@@ -7,6 +7,8 @@
 <body>
     <h3>Select a Playlist to View</h3><br>
 
+    <a href="/display?id=me">My Liked Songs</a><br>
+
     <% for (var i = 0; i < playlists.length; i++) { %>
         <a href="/display?id=<%= playlists[i].id %>"><%= playlists[i].name %></a> - <%= playlists[i].tracks.total %><br>
     <% } %>

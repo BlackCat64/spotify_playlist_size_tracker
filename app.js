@@ -85,12 +85,14 @@ const APIController = (function() {
     }
 
     const getPlaylist = async (listID) => {
-        const result = await fetch(apiBaseURL + `playlists/${listID}`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${session.access_token}`}
-        });
+        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}`;
+        // if the passed ID parameter is 'me', then return the user's Liked Songs
 
-        return await result.json(); // return object containing a specific playlist
+        const result = await fetch(apiBaseURL + listURL, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${session.access_token}`}
+        });
+        return await result.json();
     }
 
     const getPlaylistTracks = async (listID) => {
@@ -98,10 +100,11 @@ const APIController = (function() {
         let offset = 0;
         let allTracks = [];
         let continueFetch = true;
+        const listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/tracks`;
 
         // continue fetching batches of 100 tracks, until there are no more left
         while (continueFetch) {
-            const result = await fetch(apiBaseURL + `playlists/${listID}/tracks` + `?offset=${offset}`, {
+            const result = await fetch(apiBaseURL + listURL + `?offset=${offset}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${session.access_token}`}
             });
@@ -114,10 +117,7 @@ const APIController = (function() {
                 if (data.items.length < fetchLimit)
                     continueFetch = false;
             }
-            else {
-                console.log(JSON.stringify(result));
-                throw new Error("Failed to fetch playlist tracks");
-            }
+            else return result.json(); // return error JSON object, if fetching the playlist tracks fails
         }
 
         return allTracks; // return object containing list of tracks
@@ -156,11 +156,16 @@ const APIController = (function() {
     const app = express(); // use ExpressJS
     app.set('view engine', 'ejs'); // use EJS files
 
+    app.get('/', (req, res) => {
+        res.redirect('/login');
+    })
+
+
     // login page - redirects to spotify login
     app.get('/login', (req, res) => {
         console.log("LOGIN");
         // allow access to all this user's playlists
-        const scope = 'playlist-read-private playlist-read-collaborative';
+        const scope = 'playlist-read-private playlist-read-collaborative user-library-read';
         // generate random state string, for security
         state = generateRandomString(16);
 
@@ -235,9 +240,18 @@ const APIController = (function() {
         }
 
         const list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
-        let tracks = await getPlaylistTracks(req.query.id);
-        let numTracks = tracks.length;
+        if (list.error) {
+            res.json(list);
+            return;
+        }
 
+        let tracks = await getPlaylistTracks(req.query.id); // get that playlist's tracks
+        if (tracks.error) {
+            res.json(tracks); // account for errors
+            return;
+        }
+
+        let numTracks = tracks.length;
         if (numTracks <= 0) {
             res.send("This playlist has no tracks.");
             return;
