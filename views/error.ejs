@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= error_code %> <%= error_title %></title>
+</head>
+<body>
+    <h1><%= error_code %> <%= error_title %></h1>
+    <p><%= error_msg %></p>
+    <div id="error_details">
+    <details>
+        <summary>Error Details</summary>
+        <%= error_details %>
+    </details>
+    </div>
+    <br>
+    <a href="/">Return to Home Page</a>
+</body>
+</html>

@@ -234,20 +234,29 @@ const APIController = (function() {
             return;
         }
 
-        if (!req.query.id) {
-            res.send("No playlist selected.");
+        if (!req.query.id) { // if this page is somehow reached with no playlist selected, then
+            res.redirect('/error?' + querystring.stringify({
+                code: "501",
+                detail: "No playlist was selected."
+            }));
             return;
         }
 
         const list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
         if (list.error) {
-            res.json(list);
+            res.redirect('/error?' + querystring.stringify({
+                code: list.error.status,
+                detail: list.error.message
+            }));
             return;
         }
 
         let tracks = await getPlaylistTracks(req.query.id); // get that playlist's tracks
         if (tracks.error) {
-            res.json(tracks); // account for errors
+            res.redirect('/error?' + querystring.stringify({
+                code: list.error.status,
+                detail: list.error.message
+            }));
             return;
         }
 
@@ -294,6 +303,62 @@ const APIController = (function() {
                 track_links: trackLinks,
                 num_tracks: numTracks,
                 chart_data: chartData
+        });
+    });
+
+    app.get('/error', (req, res) => {
+        const code = req.query.code || "404";
+        const detail = req.query.detail || "No further information given.";
+
+        let title, message;
+        switch (code) {
+            case "400":
+                title = "Bad Request";
+                message = "The server was unable to process your request. Please try again.";
+                break;
+            case "401":
+                title = "Unauthorized";
+                message = "You must be logged into a Spotify account to view this page.";
+                break;
+            case "403":
+                title = "Forbidden";
+                message = "You do not have access to this content. This may be because the playlist is private, and not yours.";
+                break;
+            case "404":
+                title = "Not Found";
+                message = "This page does not exist.";
+                break;
+            case "408":
+                title = "Timed Out";
+                message = "Your request timed out. Please try again.";
+                break;
+            case "500":
+                title = "Internal Server Error";
+                message = "The server encountered an error whilst processing your request. Please try again later.";
+                break;
+            case "501":
+                title = "Not Implemented";
+                message = "The server cannot fulfil this request.";
+                break;
+            case "502":
+                title = "Bad Gateway";
+                message = "There was a problem retrieving data from the Spotify API. Please try again later.";
+                break;
+            case "503":
+                title = "Service Unavailable";
+                message = "The Spotify API is currently unavailable. Please try again later.";
+                break;
+            case "504":
+                title = "Gateway Timeout";
+                message = "Your request to the Spotify API has timed out. Please try again.";
+                break;
+        }
+
+        res.render("error.ejs", {
+            error_code: code,
+            error_title: title,
+            error_msg: message,
+            error_details: detail
         });
     });
 
