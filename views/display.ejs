@@ -21,7 +21,9 @@
     <%- (i+1).toString().padStart(4, "⠀").padEnd(6, "⠀") %> | <%- display_data[i].name %> - <%- display_data[i].artists %> : <%= display_data[i].date %><br>
     <% } %>
 
+    <!-- Import libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
@@ -68,6 +70,7 @@
             type: 'line',
             data: data,
             options: {
+                responsive: true,
                 interaction: {
                     mode: 'nearest'
                 },
@@ -104,6 +107,26 @@
                                     return 'Click to Listen on Spotify';
                             }
                         }
+                    }
+                  },
+                  zoom: { // Allow zooming and panning around the chart
+                    pan: {
+                        enabled: false,
+                        modifierKey: 'ctrl',
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                            modifierKey: 'ctrl' // require Ctrl to be pressed in order to scroll zoom
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy'
+                    },
+                    limits: {
+                        y: {min: 0}
                     }
                   }
                 },
