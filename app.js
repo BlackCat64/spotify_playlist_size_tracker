@@ -288,7 +288,7 @@ const APIController = (function() {
         tooltipData.push({name: "Size as of Now", artists: numTracks});
 
         res.render("display.ejs", {
-                list_name: list.name,
+                list_name: list.name || "My Liked Songs",
                 display_data: displayData,
                 tooltip_data: tooltipData,
                 track_links: trackLinks,
