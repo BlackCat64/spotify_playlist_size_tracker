@@ -228,138 +228,159 @@ const APIController = (function() {
         res.render("list.ejs", { playlists: playlists}); // render html (dynamically)
     });
 
-    app.get('/display', async (req, res) => {
-        if (!await checkSession()) {
-            res.redirect('/login'); // prompt login if session is not valid
-            return;
-        }
+    app.get('/display', async (req, res, next) => {
+        try {
+            if (!await checkSession()) {
+                res.redirect('/login'); // prompt login if session is not valid
+                return;
+            }
 
-        if (!req.query.id) { // if this page is somehow reached with no playlist selected, then
-            res.redirect('/error?' + querystring.stringify({
-                code: "501",
-                detail: "No playlist was selected."
-            }));
-            return;
-        }
+            // throw new Error("Cannot divide by zero."); // DEBUG - Throw serverside error
 
-        const list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
-        if (list.error) {
-            res.redirect('/error?' + querystring.stringify({
-                code: list.error.status,
-                detail: list.error.message
-            }));
-            return;
-        }
+            if (!req.query.id) { // if this page is somehow reached with no playlist selected, then
+                res.redirect('/error?' + querystring.stringify({
+                    code: "501",
+                    detail: "No playlist was selected."
+                }));
+                return;
+            }
 
-        let tracks = await getPlaylistTracks(req.query.id); // get that playlist's tracks
-        if (tracks.error) {
-            res.redirect('/error?' + querystring.stringify({
-                code: list.error.status,
-                detail: list.error.message
-            }));
-            return;
-        }
+            const list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
+            if (list.error) {
+                res.redirect('/error?' + querystring.stringify({
+                    code: list.error.status || 500,
+                    detail: list.error.message
+                }));
+                return;
+            }
 
-        let numTracks = tracks.length;
-        if (numTracks <= 0) {
-            res.send("This playlist has no tracks.");
-            return;
-        }
+            let tracks = await getPlaylistTracks(req.query.id); // get that playlist's tracks
+            if (tracks.error) {
+                res.redirect('/error?' + querystring.stringify({
+                    code: list.error.status || 500,
+                    detail: list.error.message
+                }));
+                return;
+            }
 
-        tracks.sort((a,b) => new Date(a.added_at) - new Date(b.added_at));
-        // sort the tracks by the date they were added
+            let numTracks = tracks.length;
+            if (numTracks <= 0) {
+                res.send("This playlist has no tracks.");
+                return;
+            }
 
-        // store various data for each track, in parallel arrays
-        let displayData = new Array(numTracks);
-        let tooltipData = new Array(numTracks);
-        let chartData = new Array(numTracks);
-        let trackLinks = new Array(numTracks)
+            tracks.sort((a, b) => new Date(a.added_at) - new Date(b.added_at));
+            // sort the tracks by the date they were added
 
-        for (let i = 0; i < numTracks; i++) {
-            let track = tracks[i];
-            displayData[i] = { // prepare data for displaying list of songs
-                name: getTrackURL(track.track),
-                artists: getTrackArtists(track.track, true),
-                date: formatDate(track.added_at)
-            };
-            tooltipData[i] = { // prepare data for point hover tooltips
-                name: track.track.name,
-                artists: getTrackArtists(track.track, false)
-            };
-            chartData[i] = { // prepare data to be displayed on a chart
-                x: track.added_at,
-                y: (i+1)
-            };
-            trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
-        }
+            // store various data for each track, in parallel arrays
+            let displayData = new Array(numTracks);
+            let tooltipData = new Array(numTracks);
+            let chartData = new Array(numTracks);
+            let trackLinks = new Array(numTracks)
 
-        chartData.push({ x: Date.now(), y: (numTracks+0.001) }); // make sure the size 'as of now' is displayed initially
-        tooltipData.push({name: "Size as of Now", artists: numTracks});
+            for (let i = 0; i < numTracks; i++) {
+                let track = tracks[i];
+                displayData[i] = { // prepare data for displaying list of songs
+                    name: getTrackURL(track.track),
+                    artists: getTrackArtists(track.track, true),
+                    date: formatDate(track.added_at)
+                };
+                tooltipData[i] = { // prepare data for point hover tooltips
+                    name: track.track.name,
+                    artists: getTrackArtists(track.track, false)
+                };
+                chartData[i] = { // prepare data to be displayed on a chart
+                    x: track.added_at,
+                    y: (i + 1)
+                };
+                trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
+            }
 
-        res.render("display.ejs", {
+            chartData.push({x: Date.now(), y: (numTracks + 0.001)}); // make sure the size 'as of now' is displayed initially
+            tooltipData.push({name: "Size as of Now", artists: numTracks});
+
+            res.render("display.ejs", {
                 list_name: list.name || "My Liked Songs",
                 display_data: displayData,
                 tooltip_data: tooltipData,
                 track_links: trackLinks,
                 num_tracks: numTracks,
                 chart_data: chartData
-        });
+            });
+        }
+        catch (err) {
+            next(err);
+        }
     });
 
     app.get('/error', (req, res) => {
-        const code = req.query.code || "404";
+        const code = parseInt(req.query.code) || 404;
         const detail = req.query.detail || "No further information given.";
 
         let title, message;
         switch (code) {
-            case "400":
+            case 400:
                 title = "Bad Request";
                 message = "The server was unable to process your request. Please try again.";
                 break;
-            case "401":
+            case 401:
                 title = "Unauthorized";
                 message = "You must be logged into a Spotify account to view this page.";
                 break;
-            case "403":
+            case 403:
                 title = "Forbidden";
                 message = "You do not have access to this content. This may be because the playlist is private, and not yours.";
                 break;
-            case "404":
+            case 404:
                 title = "Not Found";
                 message = "This page does not exist.";
                 break;
-            case "408":
+            case 408:
                 title = "Timed Out";
                 message = "Your request timed out. Please try again.";
                 break;
-            case "500":
+            case 500:
                 title = "Internal Server Error";
                 message = "The server encountered an error whilst processing your request. Please try again later.";
                 break;
-            case "501":
+            case 501:
                 title = "Not Implemented";
                 message = "The server cannot fulfil this request.";
                 break;
-            case "502":
+            case 502:
                 title = "Bad Gateway";
                 message = "There was a problem retrieving data from the Spotify API. Please try again later.";
                 break;
-            case "503":
+            case 503:
                 title = "Service Unavailable";
                 message = "The Spotify API is currently unavailable. Please try again later.";
                 break;
-            case "504":
+            case 504:
                 title = "Gateway Timeout";
                 message = "Your request to the Spotify API has timed out. Please try again.";
                 break;
         }
 
-        res.render("error.ejs", {
+        res.status(code).render("error.ejs", {
             error_code: code,
             error_title: title,
             error_msg: message,
             error_details: detail
         });
+    });
+
+    // redirect any unrecognised pages to the Error 404 page
+    app.use((req, res, next) => {
+        const pageAccessedMsg = `${req.originalUrl} is not a recognized page on this site.`;
+        res.redirect(`/error?code=404&detail=${encodeURIComponent(pageAccessedMsg)}`);
+    });
+
+    // redirect to Error 500 page whenever the program encounters an exception
+    app.use((err, req, res, next) => {
+        console.log(err.stack || "No stack trace available.");
+
+        const errorMessage = err.message || "Unknown Error.";
+        res.redirect(`/error?code=500&detail=${encodeURIComponent(errorMessage)}`);
     });
 
     app.listen(5000, () => {
