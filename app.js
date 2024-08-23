@@ -210,22 +210,27 @@ const APIController = (function() {
         res.redirect("/list");
     });
 
-    app.get('/list', async (req, res) => {
-        if (!await checkSession()) {
-            res.redirect('/login'); // prompt login if session is not valid
-            return;
+    app.get('/list', async (req, res, next) => {
+        try {
+            if (!await checkSession()) {
+                res.redirect('/login'); // prompt login if session is not valid
+                return;
+            }
+
+            const playlists = await getUserPlaylists(); // get playlists of the currently logged-in user (/me/playlists)
+
+            if (playlists.error) { // handle any errors when fetching the playlist data
+                res.redirect('/error?' + querystring.stringify({
+                    code: playlists.error.status || 500,
+                    detail: playlists.error.message
+                }));
+                return; // ALWAYS RETURN after using res, to avoid header errors!
+            }
+            res.render("list.ejs", {playlists: playlists.items}); // render html (dynamically)
         }
-
-        const playlistsData = await getUserPlaylists(); // get playlists of the currently logged-in user (/me/playlists)
-
-        const playlists = playlistsData.items;
-
-        if (playlists.error) { // if there is some sort of error, return to the login page
-            res.redirect('/login');
-            return; // ALWAYS RETURN after using res, to avoid header errors!
+        catch (err) {
+            next(err);
         }
-
-        res.render("list.ejs", { playlists: playlists}); // render html (dynamically)
     });
 
     app.get('/display', async (req, res, next) => {
@@ -315,7 +320,7 @@ const APIController = (function() {
 
     app.get('/error', (req, res) => {
         const code = parseInt(req.query.code) || 404;
-        const detail = req.query.detail || "No further information given.";
+        const detail = req.query.detail || "No further information.";
 
         let title, message;
         switch (code) {
