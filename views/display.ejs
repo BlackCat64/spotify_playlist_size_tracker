@@ -126,7 +126,8 @@
                         mode: 'xy'
                     },
                     limits: {
-                        y: {min: 0}
+                        x: {min: axisStart - (0.25 * range), max: axisEnd + (0.25 * range)},
+                        y: {min: 0, max: <%= num_tracks + 10 %>}
                     }
                   }
                 },
@@ -166,7 +167,7 @@
                             padding: {top: 0, left: 0, right: 20, bottom: 0}
                         },
                         min: 0,
-                        max: <%= Math.ceil(num_tracks / 10) * 10 %>,
+                        max: <%= Math.ceil((num_tracks+1) / 10) * 10 %>,
                         ticks: {
                             stepSize: <%= Math.ceil(num_tracks / 10) %>
                         }
