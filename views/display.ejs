@@ -21,12 +21,12 @@
     <%- (i+1).toString().padStart(4, "⠀").padEnd(6, "⠀") %> | <%- display_data[i].name %> - <%- display_data[i].artists %> : <%= display_data[i].date %><br>
     <% } %>
 
-    <!-- Import libraries -->
+    <!-- Import libraries, Order is IMPORTANT -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
-    <script src="/node_modules/hammerjs/hammer.min.js"></script>
 
     <script>
         // define functions first
@@ -111,11 +111,6 @@
                     }
                   },
                   zoom: { // Allow zooming and panning around the chart
-                    pan: {
-                        enabled: true,
-                        modifierKey: 'ctrl',
-                        mode: 'xy'
-                    },
                     zoom: {
                         wheel: {
                             enabled: true,
@@ -124,6 +119,10 @@
                         pinch: {
                             enabled: true
                         },
+                        mode: 'xy'
+                    },
+                    pan: {
+                        enabled: true,
                         mode: 'xy'
                     },
                     limits: {
