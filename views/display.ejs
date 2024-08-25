@@ -33,6 +33,7 @@
                 <th>#</th>
                 <th>Track</th>
                 <th colspan="<%= max_artists %>">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
+                <th>Album</th>
                 <th>Date Added</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
@@ -45,6 +46,7 @@
                 <% for (let j = display_data[i].artists.length; j < max_artists; j++) { %>
                     <td></td>
                 <% } %>
+                <td><%- display_data[i].album %></td>
                 <td><%= display_data[i].date %></td>
             </tr>
         <% } %>

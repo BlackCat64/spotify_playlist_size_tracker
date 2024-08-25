@@ -154,6 +154,14 @@ const APIController = (function() {
         return `<a href="https://open.spotify.com/track/${track.id}" target="_blank" title="Listen on Spotify">${track.name}</a>`;
     }
 
+    const getTrackAlbumURL = (track) => {
+        const album = track.album;
+        if (!album.id) // account for albums unknown to Spotify
+            return (album.name.length > 0) ? album.name : "Unknown";
+
+        return `<a href="https://open.spotify.com/album/${album.id}" target="_blank" title="View on Spotify">${album.name}</a>`;
+    }
+
     const formatDate = (timestamp) => { // Formats the timestamp as DD/MM/YYYY
         const date = new Date(timestamp);
 
@@ -301,6 +309,7 @@ const APIController = (function() {
                 displayData[i] = { // prepare data for displaying list of songs
                     name: getTrackURL(track.track),
                     artists: getTrackArtistsArray(track.track), // Array[artist URL]
+                    album: getTrackAlbumURL(track.track),
                     date: formatDate(track.added_at)
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
