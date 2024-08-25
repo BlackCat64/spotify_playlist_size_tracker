@@ -2,24 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist Size Tracker for Spotify</title>
+    <link rel="stylesheet" href="/styles/display.css">
 </head>
 <body>
     <h1><%= list_name %></h1><br>
 
-    <div id="chart_display" style="width: 75%; height: 75%;">
+    <!-- Display the chart in a 'canvas' object -->
+    <div id="chart_display">
         <canvas id="chart"></canvas>
     </div>
+
+    <!-- Options for the chart -->
     <div id="chart_options">
         <label>
             <input type="checkbox" id="change_end_date"> X-Axis ends at Last Added Track
         </label>
     </div>
 
-    <h2>Tracks:</h2>
-    <% for (var i = 0; i < display_data.length; i++) { %>
-    <%- (i+1).toString().padStart(4, "⠀").padEnd(6, "⠀") %> | <%- display_data[i].name %> - <%- display_data[i].artists %> : <%= display_data[i].date %><br>
-    <% } %>
+    <br>
+
+    <div>
+        <h2>Tracks:</h2>
+        <table id="tracks_table">
+            <tr>
+                <th>#</th>
+                <th>Track</th>
+                <th>Artists</th>
+                <th>Date Added</th>
+            </tr>
+        <% for (var i = 0; i < display_data.length; i++) { %>
+            <tr>
+                <td><%- (i+1).toString() %></td>
+                <td><%- display_data[i].name %></td>
+                <td><%- display_data[i].artists %></td>
+                <td><%= display_data[i].date %></td>
+            </tr>
+        <% } %>
+        </table>
+    </div>
 
     <!-- Import libraries, Order is IMPORTANT -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

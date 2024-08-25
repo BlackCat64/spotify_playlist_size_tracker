@@ -1,0 +1,21 @@
+#chart_display {
+    width: 75%;
+    height: 75%;
+}
+
+table {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid black;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: center;
+}

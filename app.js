@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const querystring = require("querystring");
+const path = require('path');
 
 const APIController = (function() {
     const clientID = process.env.CLIENT_ID;
@@ -139,7 +140,7 @@ const APIController = (function() {
     const getArtistURL = (artist) => {
         if (!artist.id) // if the artist is not known on Spotify, do not show a URL
             return artist.name;
-        return `<a href="https://open.spotify.com/artist/${artist.id}" target="_blank" title="View ${name} on Spotify">${name}</a>`;
+        return `<a href="https://open.spotify.com/artist/${artist.id}" target="_blank" title="View ${artist.name} on Spotify">${artist.name}</a>`;
     }
 
     const getTrackURL = (track) => {
@@ -161,7 +162,8 @@ const APIController = (function() {
 
     // START OF APP EXECUTION
     const app = express(); // use ExpressJS
-    app.set('view engine', 'ejs'); // use EJS files
+    app.use('/styles', express.static(path.join(__dirname, 'styles'))); // use CSS files in the 'styles' directory
+    app.set('view engine', 'ejs'); // use EJS files in the 'views' directory
 
     app.get('/', (req, res) => {
         res.redirect('/login');
