@@ -124,17 +124,22 @@ const APIController = (function() {
         return allTracks; // return object containing list of tracks
     }
 
-    const getTrackArtists = (track, showURL) => {
+    const getTrackArtistsArray = (track) => { // returns an array of a track's artists, in the form of URLs to their pages on Spotify
+        let arr = [];
+        for (let artist of track.artists) { // add the URL of each artist to an array
+            arr.push(getArtistURL(artist));
+        }
+        return arr;
+    }
+
+    const getTrackArtistsString = (track) => { // returns a comma-separated list of a track's artists
         let str = "";
         for (let artist of track.artists) {
-            if (showURL)
-                str += `${getArtistURL(artist)}, `;
-            else str += `${artist.name}, `;
-        } // embed a clickable link to the artist's page on Spotify, if enabled
-
+            str += `${artist.name}, `;
+        }
         if (str.trim().length < 2) // if the string only contains 1 comma, or is empty, then the artist was not found on Spotify
             return "Unknown";
-        else return str.substring(0, str.length - 2); // return a comma-separated list of a track's artists
+        else return str.substring(0, str.length - 2);
     }
 
     const getArtistURL = (artist) => {
@@ -144,19 +149,18 @@ const APIController = (function() {
     }
 
     const getTrackURL = (track) => {
-        if (!track.id)
+        if (!track.id) // if the track is not known on Spotify, do not show a URL
             return track.name;
         return `<a href="https://open.spotify.com/track/${track.id}" target="_blank" title="Listen on Spotify">${track.name}</a>`;
-    } // embed link to play the song on spotify
+    }
 
-    const formatDate = (timestamp) => {
+    const formatDate = (timestamp) => { // Formats the timestamp as DD/MM/YYYY
         const date = new Date(timestamp);
 
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
         const year = date.getFullYear();
 
-        // Format the date as DD/MM/YYYY
         return `${day}/${month}/${year}`;
     }
 
@@ -296,12 +300,12 @@ const APIController = (function() {
                 let track = tracks[i];
                 displayData[i] = { // prepare data for displaying list of songs
                     name: getTrackURL(track.track),
-                    artists: getTrackArtists(track.track, true),
+                    artists: getTrackArtistsArray(track.track), // Array[artist URL]
                     date: formatDate(track.added_at)
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
                     name: track.track.name,
-                    artists: getTrackArtists(track.track, false)
+                    artists: getTrackArtistsString(track.track) // Comma-separated list of Artist names
                 };
                 chartData[i] = { // prepare data to be displayed on a chart
                     x: track.added_at,
@@ -319,7 +323,8 @@ const APIController = (function() {
                 tooltip_data: tooltipData,
                 track_links: trackLinks,
                 num_tracks: numTracks,
-                chart_data: chartData
+                chart_data: chartData,
+                max_artists: Math.max(...displayData.map(track => track.artists.length)) // calculate the highest no. of artists that any song has
             });
         }
         catch (err) {

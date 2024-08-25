@@ -16,6 +16,9 @@
 
     <!-- Options for the chart -->
     <div id="chart_options">
+        <h3>Chart Controls</h3>
+        <p>Hold <kbd>CTRL</kbd> and Scroll to Zoom</p>
+        <p>Click and Drag to Pan</p>
         <label>
             <input type="checkbox" id="change_end_date"> X-Axis ends at Last Added Track
         </label>
@@ -29,14 +32,19 @@
             <tr>
                 <th>#</th>
                 <th>Track</th>
-                <th>Artists</th>
+                <th colspan="<%= max_artists %>">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
                 <th>Date Added</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
                 <td><%- (i+1).toString() %></td>
                 <td><%- display_data[i].name %></td>
-                <td><%- display_data[i].artists %></td>
+                <% for (let artist of display_data[i].artists) { %>
+                    <td><%- artist %></td>
+                <% } %>
+                <% for (let j = display_data[i].artists.length; j < max_artists; j++) { %>
+                    <td></td>
+                <% } %>
                 <td><%= display_data[i].date %></td>
             </tr>
         <% } %>
