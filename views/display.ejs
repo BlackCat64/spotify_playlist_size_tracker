@@ -182,13 +182,13 @@
             let range = axisEnd - minDate;
             axisStart = new Date(minDate - (0.05 * range));
 
-            if (this.checked) {
+            if (this.checked) { // if Now is not shown on the scale, remove the data point
                 if (tooltip_data[tooltip_data.length - 1].name === "Size as of Now") {
                     tooltip_data.pop();
                     json_data.pop();
                 }
             }
-            else {
+            else { // if Now is shown on the scale, add a new data point
                 if (tooltip_data[tooltip_data.length - 1].name !== "Size as of Now") {
                     tooltip_data.push({
                         "name": "Size as of Now",

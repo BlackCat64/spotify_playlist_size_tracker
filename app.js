@@ -130,14 +130,21 @@ const APIController = (function() {
                 str += `${getArtistURL(artist)}, `;
             else str += `${artist.name}, `;
         } // embed a clickable link to the artist's page on Spotify, if enabled
-        return str.substring(0, str.length - 2); // return a comma-separated list of a track's artists
+
+        if (str.trim().length < 2) // if the string only contains 1 comma, or is empty, then the artist was not found on Spotify
+            return "Unknown";
+        else return str.substring(0, str.length - 2); // return a comma-separated list of a track's artists
     }
 
     const getArtistURL = (artist) => {
-        return `<a href="https://open.spotify.com/artist/${artist.id}" target="_blank" title="View ${artist.name} on Spotify">${artist.name}</a>`;
+        if (!artist.id) // if the artist is not known on Spotify, do not show a URL
+            return artist.name;
+        return `<a href="https://open.spotify.com/artist/${artist.id}" target="_blank" title="View ${name} on Spotify">${name}</a>`;
     }
 
     const getTrackURL = (track) => {
+        if (!track.id)
+            return track.name;
         return `<a href="https://open.spotify.com/track/${track.id}" target="_blank" title="Listen on Spotify">${track.name}</a>`;
     } // embed link to play the song on spotify
 
