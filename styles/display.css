@@ -1,22 +1,32 @@
 #chart_display {
-    width: 75%;
-    height: 75%;
+    width: 70%;
+    height: 70%;
 }
 
-table {
+#chart_controls_title {
+    margin: 5px;
+}
+
+#tracks_table {
     width: 100%;
-    border: 1px solid black;
+    border: 3px solid rgb(128, 128, 128);
     border-collapse: collapse;
 }
 
-th, td {
+#tracks_table th, td {
     padding: 8px;
     text-align: left;
     border: 1px solid black;
 }
 
-th {
+#tracks_table th {
     background-color: #f2f2f2;
     text-align: center;
     font-weight: bolder;
+}
+
+#options_row td {
+    padding: 12px;
+    text-align: center;
+    border: 0;
 }
