@@ -193,6 +193,14 @@ const APIController = (function() {
         return `${day}/${month}/${year}`;
     }
 
+    const formatDuration = (duration) => { // Turns a duration in milliseconds into a human-readable format
+        const totalSeconds = Math.floor(duration / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        return mins.toString() + ":" + seconds.toString().padStart(2, "0");
+    }
+
     // START OF APP EXECUTION
     const app = express(); // use ExpressJS
     app.use('/styles', express.static(path.join(__dirname, 'styles'))); // use CSS files in the 'styles' directory
@@ -332,7 +340,8 @@ const APIController = (function() {
                     artists: getTrackArtistsArray(track.track), // Array[artist URL]
                     album: getTrackAlbumURL(track.track),
                     date_added: formatTimestamp(track.added_at),
-                    release_date: getTrackReleaseDate(track.track)
+                    release_date: getTrackReleaseDate(track.track),
+                    duration: formatDuration(track.track.duration_ms)
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
                     name: track.track.name,

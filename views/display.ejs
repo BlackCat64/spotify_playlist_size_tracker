@@ -36,6 +36,7 @@
                 <th>Album</th>
                 <th>Date Added</th>
                 <th><abbr title="The date the track's album was released. May not be the track's original release date.">Release Date</abbr></th>
+                <th>Duration</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
@@ -50,6 +51,7 @@
                 <td><%- display_data[i].album %></td>
                 <td><%= display_data[i].date_added %></td>
                 <td><%= display_data[i].release_date %></td>
+                <td><%- display_data[i].duration %></td>
             </tr>
         <% } %>
         </table>
