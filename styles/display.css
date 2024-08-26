@@ -7,10 +7,22 @@
     margin: 5px;
 }
 
+#options_row {
+    border-style: dotted;
+    border-radius: 10px;
+}
+
+#options_row td {
+    padding: 12px;
+    text-align: center;
+    border: 0;
+}
+
 #tracks_table {
     width: 100%;
     border: 3px solid rgb(128, 128, 128);
     border-collapse: collapse;
+    border-radius: 10px;
 }
 
 #tracks_table th, td {
@@ -20,13 +32,11 @@
 }
 
 #tracks_table th {
-    background-color: #f2f2f2;
+    background-color: #e0e0e0;
     text-align: center;
     font-weight: bolder;
 }
 
-#options_row td {
-    padding: 12px;
-    text-align: center;
-    border: 0;
+#tracks_table tr:nth-child(even) {
+    background-color: #f7f7f7;
 }
