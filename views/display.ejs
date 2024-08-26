@@ -35,6 +35,7 @@
                 <th colspan="<%= max_artists %>">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
                 <th>Album</th>
                 <th>Date Added</th>
+                <th><abbr title="The date the track's album was released. May not be the track's original release date.">Release Date</abbr></th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
@@ -47,7 +48,8 @@
                     <td></td>
                 <% } %>
                 <td><%- display_data[i].album %></td>
-                <td><%= display_data[i].date %></td>
+                <td><%= display_data[i].date_added %></td>
+                <td><%= display_data[i].release_date %></td>
             </tr>
         <% } %>
         </table>

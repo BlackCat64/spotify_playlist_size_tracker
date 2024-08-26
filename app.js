@@ -162,6 +162,14 @@ const APIController = (function() {
         return `<a href="https://open.spotify.com/album/${album.id}" target="_blank" title="View on Spotify">${album.name}</a>`;
     }
 
+    const getTrackReleaseDate = (track) => {
+        const album = track.album;
+        if (!album.id)
+            return "Unknown"; // release date is only available if the track's album is on Spotify
+
+        return album.release_date;
+    }
+
     const formatDate = (timestamp) => { // Formats the timestamp as DD/MM/YYYY
         const date = new Date(timestamp);
 
@@ -310,7 +318,8 @@ const APIController = (function() {
                     name: getTrackURL(track.track),
                     artists: getTrackArtistsArray(track.track), // Array[artist URL]
                     album: getTrackAlbumURL(track.track),
-                    date: formatDate(track.added_at)
+                    date_added: formatDate(track.added_at),
+                    release_date: getTrackReleaseDate(track.track)
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
                     name: track.track.name,
