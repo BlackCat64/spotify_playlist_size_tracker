@@ -129,6 +129,8 @@ const APIController = (function() {
         for (let artist of track.artists) { // add the URL of each artist to an array
             arr.push(getArtistURL(artist));
         }
+        if (arr[0] === "")
+            arr[0] = "Unknown";
         return arr;
     }
 
