@@ -167,10 +167,23 @@ const APIController = (function() {
         if (!album.id)
             return "Unknown"; // release date is only available if the track's album is on Spotify
 
-        return album.release_date;
+        return formatIncompleteDate(album.release_date); // format the date
     }
 
-    const formatDate = (timestamp) => { // Formats the timestamp as DD/MM/YYYY
+    const formatIncompleteDate = (dateStr) => {
+        let parts = dateStr.split('-'); // takes in dates of form YYYY(-MM(-DD))
+
+        if (!parts[0]) // year should always be present, but add a failsafe
+            return "Unknown";
+
+        let year = parts[0];
+        let month = parts[1] || '01'; // Default to January if month is missing
+        let day = parts[2] || '01';   // Default to 1st day if day is missing
+
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+    }
+
+    const formatTimestamp = (timestamp) => { // Formats the timestamp as DD/MM/YYYY
         const date = new Date(timestamp);
 
         const day = String(date.getDate()).padStart(2, '0');
@@ -318,7 +331,7 @@ const APIController = (function() {
                     name: getTrackURL(track.track),
                     artists: getTrackArtistsArray(track.track), // Array[artist URL]
                     album: getTrackAlbumURL(track.track),
-                    date_added: formatDate(track.added_at),
+                    date_added: formatTimestamp(track.added_at),
                     release_date: getTrackReleaseDate(track.track)
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
