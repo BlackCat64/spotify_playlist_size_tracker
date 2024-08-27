@@ -130,7 +130,7 @@ const APIController = (function() {
             arr.push(getArtistURL(artist));
         }
         if (arr[0] === "")
-            arr[0] = "Unknown";
+            arr[0] = "Unknown"; // account for songs with no artists given
         return arr;
     }
 
