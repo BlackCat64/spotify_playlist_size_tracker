@@ -99,6 +99,12 @@
             return (mins * 60) + secs;
         }
 
+        // GLOBAL VARIABLES
+        let CURRENTLY_SORTED = <%= max_artists + 3 %>; // the 'Date Added' column is initially sorted
+        // the abs. value of this variable is the index of the currently sorted column
+        // if negative, it is in DESCENDING order
+        // if positive, it is in ASCENDING order
+
         // get document elements
         const canvas = document.getElementById('chart');
         const box = document.getElementById('change_end_date');
@@ -281,6 +287,13 @@
             if (columnIndex === <%= max_artists + 3 %>) // for 'Date Added', use the same sort as '#' column
                 indexToSort = 0;
 
+            let reverse = false;
+            if (CURRENTLY_SORTED === columnIndex) {
+                reverse = true;
+                CURRENTLY_SORTED = columnIndex * -1;
+            }
+            else CURRENTLY_SORTED = columnIndex;
+
             // Sort rows based on the content of the specified column
             let sortedRows = rows.sort((rowA, rowB) => {
                 let cellA = rowA.cells[indexToSort].innerText.toLowerCase();
@@ -289,6 +302,7 @@
                 if (indexToSort === 0) { // for the '#' column, sort numerically, not alphabetically
                     cellA = parseInt(cellA);
                     cellB = parseInt(cellB);
+                    columnIndex = <%= max_artists + 3 %>; // this is important for keeping track of which column is sorted
                 }
                 else if (columnIndex === <%= max_artists + 4 %>) { // the 'Release Date' column must be sorted as Dates, not alphabetically
                     cellA = stringToDate(cellA);
@@ -306,12 +320,8 @@
                     diff = 1;
                 else diff = 0;
 
-                if (false) { // if required, reverse the sort
+                if (reverse)
                     diff = diff * -1;
-                }
-                else {
-
-                }
 
                 return diff;
             });
@@ -326,6 +336,8 @@
 
             // Append sorted rows to the table body
             sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+
+            console.log(CURRENTLY_SORTED);
         }
     </script>
 </body>
