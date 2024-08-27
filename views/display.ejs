@@ -37,7 +37,7 @@
                 <th colspan="<%= max_artists %>" onClick="sortTable(2)">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
                 <th onClick="sortTable(<%= max_artists + 2 %>)">Album</th>
                 <th onClick="sortTable(<%= max_artists + 3 %>)">Date Added</th>
-                <th onClick="sortTable(<%= max_artists + 4 %>)"><abbr title="The date the track's album was released. May not be the track's original release date.">Release Date</abbr></th>
+                <th onClick="sortTable(<%= max_artists + 4 %>)">Release Date</th>
                 <th onClick="sortTable(<%= max_artists + 5 %>)">Duration</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
@@ -104,6 +104,8 @@
         // the abs. value of this variable is the index of the currently sorted column
         // if negative, it is in DESCENDING order
         // if positive, it is in ASCENDING order
+
+        const TABLE_HEADINGS = ["#", "Track", "Artists", "Album", "Date Added", "Release Date", "Duration"];
 
         // get document elements
         const canvas = document.getElementById('chart');
@@ -335,15 +337,15 @@
 
             // remove all existing small triangles
             for (let i = 0; i < headings.cells.length; i++) {
-                headings.cells[i].innerText = headings.cells[i].innerText.split(" ")[0];
+                headings.cells[i].innerText = TABLE_HEADINGS[i];
             }
 
-            // fix off-by-one error with the small triangle display, since there are fewer headings than columns
+            // fix error with the small triangle display, since there are fewer headings than columns
             if (displayedIndex > <%= max_artists + 1 %>)
                 displayedIndex -= <%= max_artists - 1 %>;
 
             // add small triangle to the sorted column's heading, to show that it is sorted
-            headings.cells[displayedIndex].innerText = headings.cells[displayedIndex].innerText.split(" ")[0] + ((CURRENTLY_SORTED > 0) ? "  ▼" : "  ▲");
+            headings.cells[displayedIndex].innerText += (CURRENTLY_SORTED > 0) ? "  ▼" : "  ▲";
 
             // re-add the table headings
             table.tBodies[0].appendChild(headings);
