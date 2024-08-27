@@ -283,16 +283,19 @@
             const headings = table.rows[0];
             const rows = Array.from(table.rows).slice(1); // Get all rows except the header
             let indexToSort = columnIndex;
+            let displayedIndex = columnIndex;
 
             if (columnIndex === <%= max_artists + 3 %>) // for 'Date Added', use the same sort as '#' column
                 indexToSort = 0;
+            if (indexToSort === 0) // this is important for keeping track of which column is sorted,
+                displayedIndex = <%= max_artists + 3 %>; // as well as displaying the small triangle indicator
 
-            let reverse = false;
-            if (CURRENTLY_SORTED === columnIndex) {
+            let reverse = false; // if the column is already sorted in ascending order, sort it in descending order
+            if (CURRENTLY_SORTED === displayedIndex) {
                 reverse = true;
-                CURRENTLY_SORTED = columnIndex * -1;
+                CURRENTLY_SORTED = displayedIndex * -1;
             }
-            else CURRENTLY_SORTED = columnIndex;
+            else CURRENTLY_SORTED = displayedIndex; // otherwise, sort in ascending order
 
             // Sort rows based on the content of the specified column
             let sortedRows = rows.sort((rowA, rowB) => {
@@ -302,7 +305,6 @@
                 if (indexToSort === 0) { // for the '#' column, sort numerically, not alphabetically
                     cellA = parseInt(cellA);
                     cellB = parseInt(cellB);
-                    columnIndex = <%= max_artists + 3 %>; // this is important for keeping track of which column is sorted
                 }
                 else if (columnIndex === <%= max_artists + 4 %>) { // the 'Release Date' column must be sorted as Dates, not alphabetically
                     cellA = stringToDate(cellA);
@@ -320,7 +322,7 @@
                     diff = 1;
                 else diff = 0;
 
-                if (reverse)
+                if (reverse) // reverse the sort, if required
                     diff = diff * -1;
 
                 return diff;
@@ -331,13 +333,23 @@
                 table.tBodies[0].deleteRow(0);
             }
 
+            // remove all existing small triangles
+            for (let i = 0; i < headings.cells.length; i++) {
+                headings.cells[i].innerText = headings.cells[i].innerText.split(" ")[0];
+            }
+
+            // fix off-by-one error with the small triangle display, since there are fewer headings than columns
+            if (displayedIndex > <%= max_artists + 1 %>)
+                displayedIndex -= <%= max_artists - 1 %>;
+
+            // add small triangle to the sorted column's heading, to show that it is sorted
+            headings.cells[displayedIndex].innerText = headings.cells[displayedIndex].innerText.split(" ")[0] + ((CURRENTLY_SORTED > 0) ? "  ▼" : "  ▲");
+
             // re-add the table headings
             table.tBodies[0].appendChild(headings);
 
             // Append sorted rows to the table body
             sortedRows.forEach(row => table.tBodies[0].appendChild(row));
-
-            console.log(CURRENTLY_SORTED);
         }
     </script>
 </body>
