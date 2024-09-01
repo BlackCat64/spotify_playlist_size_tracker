@@ -23,6 +23,7 @@
             <td><label>
                 <input type="checkbox" id="change_end_date"> X-Axis ends at Last Added Track
             </label></td>
+            <td><button id="resetButton">Reset View</button></td>
         </table>
     </div>
 
@@ -109,7 +110,8 @@
 
         // get document elements
         const canvas = document.getElementById('chart');
-        const box = document.getElementById('change_end_date');
+        const change_end_date = document.getElementById('change_end_date');
+        const reset = document.getElementById('resetButton');
 
         const json_data = <%- JSON.stringify(chart_data) %>
         const tooltip_data = <%- JSON.stringify(tooltip_data) %>
@@ -248,7 +250,7 @@
         };
         let chart = new Chart(canvas, config); // display chart
 
-        box.addEventListener('change', function() { // listen for checkbox changes
+        change_end_date.addEventListener('change', function() { // listen for checkbox changes
             axisEnd = setMaxDate(this.checked, minDate, maxDate); // change date axes
             let range = axisEnd - minDate;
             axisStart = new Date(minDate - (0.05 * range));
@@ -278,6 +280,10 @@
             chart.config.options.scales.x.max = axisEnd;
 
             chart.update();
+        });
+
+        reset.addEventListener('click', function() {
+            location.reload();
         });
 
         function sortTable(columnIndex) {
