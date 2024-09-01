@@ -20,10 +20,16 @@
         <table id="options_row">
             <td>Hold <kbd>CTRL</kbd> and Scroll to Zoom</td>
             <td>Click and Drag to Pan</td>
-            <td><label>
-                <input type="checkbox" id="change_end_date"> X-Axis ends at Last Added Track
-            </label></td>
-            <td><button id="resetButton">Reset View</button></td>
+            <td id="graph_end_select">
+            <label id="graph_end_select_title">Graph Ends At:</label><br>
+            <label>
+                <input type="radio" name="change_end_date" value="now" id="change_end_date_radio1" checked>Now
+            </label><br>
+            <label>
+                <input type="radio" name="change_end_date" value="last_added" id="change_end_date_radio2">Last Added Track
+            </label><br>
+            </td>
+            <td><button id="reset_button">Reset View</button></td>
         </table>
     </div>
 
@@ -95,11 +101,9 @@
                 return Number.MAX_SAFE_INTEGER;
 
             const mins = parseInt(parts[0]);
-            const secs = parseInt(parts[1]);
-
+            const secs = parseInt(parts[1])
             return (mins * 60) + secs;
         }
-
         // GLOBAL VARIABLES
         let CURRENTLY_SORTED = <%= max_artists + 3 %>; // the 'Date Added' column is initially sorted
         // the abs. value of this variable is the index of the currently sorted column
@@ -110,8 +114,8 @@
 
         // get document elements
         const canvas = document.getElementById('chart');
-        const change_end_date = document.getElementById('change_end_date');
-        const reset = document.getElementById('resetButton');
+        const change_graph_end = [document.getElementById('change_end_date_radio1'), document.getElementById('change_end_date_radio2')];
+        const reset = document.getElementById('reset_button');
 
         const json_data = <%- JSON.stringify(chart_data) %>
         const tooltip_data = <%- JSON.stringify(tooltip_data) %>
@@ -250,37 +254,41 @@
         };
         let chart = new Chart(canvas, config); // display chart
 
-        change_end_date.addEventListener('change', function() { // listen for checkbox changes
-            axisEnd = setMaxDate(this.checked, minDate, maxDate); // change date axes
-            let range = axisEnd - minDate;
-            axisStart = new Date(minDate - (0.05 * range));
+        change_graph_end.forEach(radio => { // listen for radio button changes
+            radio.addEventListener('change', function() {
+                axisEnd = setMaxDate(this.checked, minDate, maxDate); // change date axes
+                let range = axisEnd - minDate;
+                axisStart = new Date(minDate - (0.05 * range));
 
-            if (this.checked) { // if Now is not shown on the scale, remove the data point
-                if (tooltip_data[tooltip_data.length - 1].name === "Size as of Now") {
-                    tooltip_data.pop();
-                    json_data.pop();
+                if (this.checked) { // only react to a radio button being checked, NOT unchecked
+                    if (this.value === 'last_added') { // if option 1 is selected, remove the Now data point
+                        if (tooltip_data[tooltip_data.length - 1].name === "Size as of Now") {
+                            tooltip_data.pop();
+                            json_data.pop();
+                        }
+                    }
+                    else { // if option 2 is selected, add a new data point to the list
+                        if (tooltip_data[tooltip_data.length - 1].name !== "Size as of Now") {
+                            tooltip_data.push({
+                                "name": "Size as of Now", // this new point shows the size of the list Now, to smooth out the graph's shape at the end
+                                "artists": <%= num_tracks %>
+                            });
+                            json_data.push({
+                                "x": Date.now(),
+                                "y": <%= num_tracks + 0.001 %>
+                            })
+                        }
+                    }
+                    // finally, set data values in the chart object
+                    chart.data.datasets[0].data = json_data;
+                    chart.config.options.scales.x.min = axisStart;
+                    chart.config.options.scales.x.max = axisEnd;
+
+                    chart.update(); // refresh the chart
                 }
-            }
-            else { // if Now is shown on the scale, add a new data point
-                if (tooltip_data[tooltip_data.length - 1].name !== "Size as of Now") {
-                    tooltip_data.push({
-                        "name": "Size as of Now",
-                        "artists": <%= num_tracks %>
-                    });
-                    json_data.push({
-                        "x": Date.now(),
-                        "y": <%= num_tracks + 0.001 %>
-                    })
-                }
-            }
-
-            // finally, set data values in the chart object
-            chart.data.datasets[0].data = json_data;
-            chart.config.options.scales.x.min = axisStart;
-            chart.config.options.scales.x.max = axisEnd;
-
-            chart.update();
+            });
         });
+
 
         reset.addEventListener('click', function() {
             location.reload();

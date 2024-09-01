@@ -40,3 +40,12 @@
 #tracks_table tr:nth-child(even) {
     background-color: #f7f7f7;
 }
+
+#options_row #graph_end_select {
+    text-align: left;
+}
+
+#options_row #graph_end_select #graph_end_select_title {
+    font-weight: bold;
+    font-size: large;
+}
