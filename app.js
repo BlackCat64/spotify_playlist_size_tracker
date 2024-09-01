@@ -13,7 +13,7 @@ const APIController = (function() {
         expires_at: undefined
     }
 
-    const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
+    const redirectURI = "https://playlist-size-tracker.onrender.com/callback";
     // const redirectURI = "http://localhost:5000/callback";
     const authURL = "https://accounts.spotify.com/authorize";
     const tokenURL = "https://accounts.spotify.com/api/token";
