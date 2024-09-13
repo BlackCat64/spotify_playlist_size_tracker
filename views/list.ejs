@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Playlist Size Tracker for Spotify</title>
+    <link rel="stylesheet" href="/styles/list.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <h3>Select a Playlist to View</h3><br>
 
-    <a href="/display?id=me">My Liked Songs</a><br>
+    <a href="/display?id=me">Liked Songs</a><br>
 
     <% for (var i = 0; i < playlists.length; i++) { %>
         <a href="/display?id=<%= playlists[i].id %>"><%= playlists[i].name %></a> - <%= playlists[i].tracks.total %><br>

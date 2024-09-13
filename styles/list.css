@@ -1,0 +1,10 @@
+body {
+    font-family: 'Inter', 'Arial', sans-serif;
+    background: rgb(48,48,48);
+    color: #ffffff;
+}
+
+h3, a {
+    font-family: 'Inter';
+    color: #ffffff;
+}
