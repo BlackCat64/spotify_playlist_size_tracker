@@ -7,8 +7,13 @@ body {
 }
 
 a {
-    font-family: Inter;
+    font-family: 'Inter', 'Arial', sans-serif;
     color: #ffffff;
+}
+
+h1, h2 {
+    font-family: 'Inter', 'Arial', sans-serif;
+    color: #21d0a7;
 }
 
 #chart_display {
@@ -24,7 +29,7 @@ a {
 }
 
 #options_row {
-    border-style: dotted;
+    border: 3px dotted rgb(96, 96, 96);
     border-radius: 10px;
 }
 
@@ -52,6 +57,11 @@ a {
     background-color: rgb(32, 32, 32);
     text-align: center;
     font-weight: bolder;
+    color: #ccf55e;
+}
+
+#tracks_table tr {
+    font-weight: lighter;
 }
 
 #tracks_table tr:nth-child(even) {
@@ -64,9 +74,11 @@ a {
 
 #options_row #graph_end_select {
     text-align: left;
+    color: #ffffff;
 }
 
 #options_row #graph_end_select #graph_end_select_title {
     font-weight: bold;
     font-size: large;
+    color: #ccf55e;
 }
