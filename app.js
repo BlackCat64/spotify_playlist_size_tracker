@@ -13,7 +13,7 @@ const APIController = (function() {
         expires_at: undefined
     }
 
-    const redirectURI = "https://playlist-size-tracker.onrender.com/callback";
+    const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
     // const redirectURI = "http://localhost:5000/callback";
     const authURL = "https://accounts.spotify.com/authorize";
     const tokenURL = "https://accounts.spotify.com/api/token";
@@ -216,7 +216,6 @@ const APIController = (function() {
 
     // login page - redirects to spotify login
     app.get('/login', (req, res) => {
-        console.log("LOGIN");
         // allow access to all this user's playlists
         const scope = 'playlist-read-private playlist-read-collaborative user-library-read';
         // generate random state string, for security
