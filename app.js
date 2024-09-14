@@ -278,7 +278,18 @@ const APIController = (function() {
                 }));
                 return; // ALWAYS RETURN after using res, to avoid header errors!
             }
-            res.render("list.ejs", {playlists: playlists.items}); // render html (dynamically)
+
+            const likedSongs = await getPlaylist('me');
+            if (likedSongs.error) {
+                res.redirect('/error?' + querystring.stringify({
+                    code: likedSongs.error.status || 500,
+                    detail: likedSongs.error.message
+                }));
+                return;
+            }
+            const numLikedSongs = likedSongs.items.length; // Get the number of Liked Songs the user has
+
+            res.render("list.ejs", {playlists: playlists.items, num_liked_songs: numLikedSongs}); // render html (dynamically)
         }
         catch (err) {
             next(err);

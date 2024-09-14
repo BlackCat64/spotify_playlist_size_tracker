@@ -15,3 +15,8 @@ a {
     font-family: 'Inter', 'Arial', sans-serif;
     color: #ccf55e;
 }
+
+img {
+    width: 128px;
+    height: auto;
+}

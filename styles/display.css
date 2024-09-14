@@ -64,6 +64,10 @@ h1, h2 {
     font-weight: lighter;
 }
 
+.track_numbers {
+    font-weight: bolder;
+}
+
 #tracks_table tr:nth-child(even) {
     background-color: rgb(65, 65, 65);
 }

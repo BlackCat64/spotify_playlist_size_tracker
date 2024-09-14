@@ -11,10 +11,22 @@
 <body>
     <h3>Select a Playlist to View</h3><br>
 
-    <a href="/display?id=me">Liked Songs</a><br>
+    <table>
+        <% if (num_liked_songs > 0) { %>
+            <tr>
+                <td><img src="https://misc.scdn.co/liked-songs/liked-songs-64.png" alt="Liked Songs"></td>
+                <td><a href="/display?id=me">Liked Songs</a></td>
+                <td><%= num_liked_songs %> Song<%= (num_liked_songs > 1) ? 's' : ''%></td>
+            </tr>
+        <% } %>
 
-    <% for (var i = 0; i < playlists.length; i++) { %>
-        <a href="/display?id=<%= playlists[i].id %>"><%= playlists[i].name %></a> - <%= playlists[i].tracks.total %><br>
-    <% } %>
+        <% for (var i = 0; i < playlists.length; i++) { %>
+            <tr>
+                <td><img src=<%= playlists[i].images[0].url %>></td>
+                <td><a href="/display?id=<%= playlists[i].id %>"><%= playlists[i].name %></a><br></td>
+                <td><%= playlists[i].tracks.total %> Song<%= (playlists[i].tracks.total > 1) ? 's' : ''%></td>
+            </tr>
+        <% } %>
+    </table>
 </body>
 </html>

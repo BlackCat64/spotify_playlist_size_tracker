@@ -54,7 +54,7 @@
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
-                <td><%- (i+1).toString() %></td>
+                <td class="track_numbers"><%- (i+1).toString() %></td>
                 <td><%- display_data[i].name %></td>
                 <% for (let artist of display_data[i].artists) { %>
                     <td><%- artist %></td>
