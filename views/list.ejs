@@ -9,24 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h3>Select a Playlist to View</h3><br>
+    <h1>Select a Playlist to View</h1><br>
 
     <table>
         <% if (num_liked_songs > 0) { %>
-            <tr>
-                <td><img src="https://misc.scdn.co/liked-songs/liked-songs-64.png" alt="Liked Songs"></td>
-                <td><a href="/display?id=me">Liked Songs</a></td>
-                <td><%= num_liked_songs %> Song<%= (num_liked_songs > 1) ? 's' : ''%></td>
+            <tr click-url="/display?id=me">
+                <td class="images"><img src="https://misc.scdn.co/liked-songs/liked-songs-64.png" alt="Liked Songs"></td>
+                <td class="list_names">Liked Songs</td>
+                <td class="num_songs"><%= num_liked_songs %> Song<%= (num_liked_songs > 1) ? 's' : ''%></td>
             </tr>
         <% } %>
 
         <% for (var i = 0; i < playlists.length; i++) { %>
-            <tr>
-                <td><img src=<%= playlists[i].images[0].url %>></td>
-                <td><a href="/display?id=<%= playlists[i].id %>"><%= playlists[i].name %></a><br></td>
-                <td><%= playlists[i].tracks.total %> Song<%= (playlists[i].tracks.total > 1) ? 's' : ''%></td>
+            <tr click-url="/display?id=<%= playlists[i].id %>">
+                <td class="images"><img src=<%= playlists[i].images[0].url %>></td>
+                <td class="list_names"><%= playlists[i].name %></td>
+                <td class="num_songs"><%= playlists[i].tracks.total %> Song<%= (playlists[i].tracks.total > 1) ? 's' : ''%></td>
             </tr>
         <% } %>
     </table>
+
+    <script>
+        const clickableRows = document.querySelectorAll('tr');
+
+        clickableRows.forEach(row => {
+            row.addEventListener('click', function() {
+                const url = row.getAttribute('click-url');
+                if (url)
+                    window.open(url, '_blank');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -2,16 +2,18 @@ body {
     font-family: 'Inter', 'Arial', sans-serif;
     background: rgb(48,48,48);
     color: #ffffff;
-    margin-left: 30px;
-    margin-right: 30px;
+    font-size: large;
 }
 
-h3 {
+h1 {
     font-family: 'Inter', 'Arial', sans-serif;
     color: #21d0a7;
+    width: 50%;
+    margin-left: 25%;
+    text-align: center;
 }
 
-a {
+.list_names {
     font-family: 'Inter', 'Arial', sans-serif;
     color: #ccf55e;
 }
@@ -19,4 +21,37 @@ a {
 img {
     width: 128px;
     height: auto;
+}
+
+table {
+    width: 50%;
+    margin-left: 25%;
+    border-spacing: 0 10px;
+}
+
+tr {
+    background-color: rgb(24,24,24);
+    box-shadow: 0 0 0 3px rgb(100, 100, 100);
+    border-radius: 10px;
+    height: 160px;
+}
+tr:hover {
+    background-color: rgb(36,36,36);
+}
+
+td {
+    padding: 10px;
+    cursor: pointer;
+    border: 0;
+}
+
+.images {
+    padding-left: 20px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.num_songs {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
