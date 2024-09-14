@@ -29,6 +29,9 @@
         <% } %>
     </table>
 
+    <% if (playlists.length === 0) { %>
+        You have no playlists on your Spotify account. Create one or become a collaborator to view them here!
+    <% } %>
     <script>
         const clickableRows = document.querySelectorAll('tr');
 

@@ -44,13 +44,13 @@
         <h2>Tracks:</h2>
         <table id="tracks_table">
             <tr>
-                <th onClick="sortTable(0)">#</th>
-                <th onClick="sortTable(1)">Track</th>
-                <th colspan="<%= max_artists %>" onClick="sortTable(2)">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
-                <th onClick="sortTable(<%= max_artists + 2 %>)">Album</th>
-                <th onClick="sortTable(<%= max_artists + 3 %>)">Date Added</th>
-                <th onClick="sortTable(<%= max_artists + 4 %>)">Release Date</th>
-                <th onClick="sortTable(<%= max_artists + 5 %>)">Duration</th>
+                <th title="Click to Sort by Track No." onClick="sortTable(0)">#</th>
+                <th title="Click to Sort Alphabetically by Track Name" onClick="sortTable(1)">Track</th>
+                <th title="Click to Sort Alphabetically by Artist Name" colspan="<%= max_artists %>" onClick="sortTable(2)">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
+                <th title="Click to Sort Alphabetically by Album Name" onClick="sortTable(<%= max_artists + 2 %>)">Album</th>
+                <th title="Click to Sort by Date Added" onClick="sortTable(<%= max_artists + 3 %>)">Date Added</th>
+                <th title="Click to Sort by Release Date" onClick="sortTable(<%= max_artists + 4 %>)">Release Date</th>
+                <th title="Click to Sort by Duration" onClick="sortTable(<%= max_artists + 5 %>)">Duration</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
