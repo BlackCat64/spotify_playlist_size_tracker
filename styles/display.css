@@ -86,3 +86,27 @@ h1, h2 {
     font-size: large;
     color: #ccf55e;
 }
+
+button {
+    padding: 10px 20px;
+
+    background-color: #ccf55e;
+    border: 5px solid #ccf55e;
+    border-radius: 16px;
+
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: large;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #a1c24a;
+    border-color: #a1c24a;
+}
+
+button:active {
+    background-color: #8ca840;
+    border-color: #8ca840;
+}

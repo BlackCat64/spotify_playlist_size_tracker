@@ -33,6 +33,9 @@ tr {
 tr:hover {
     background-color: rgb(36,36,36);
 }
+tr:active {
+    background-color: rgb(44, 44, 44);
+}
 
 td {
     padding: 10px;
