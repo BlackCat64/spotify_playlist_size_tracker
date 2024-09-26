@@ -10,7 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1><%= list_name %></h1><br>
+    <% if (list_name == "Liked Songs") { %>
+        <a href="https://open.spotify.com/collection/tracks" target="_blank"><h1><%= list_name %></h1></a><br>
+    <% } else { %>
+        <a href="https://open.spotify.com/playlist/<%= list_id %>" target="_blank"><h1><%= list_name %></h1></a><br>
+    <% }%>
 
     <!-- Display the chart in a 'canvas' object -->
     <div id="chart_display">

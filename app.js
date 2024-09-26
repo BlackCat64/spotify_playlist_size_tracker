@@ -372,6 +372,7 @@ const APIController = (function() {
 
             res.render("display.ejs", {
                 list_name: list.name || "Liked Songs",
+                list_id: req.query.id,
                 display_data: displayData,
                 tooltip_data: tooltipData,
                 track_links: trackLinks,
