@@ -207,12 +207,12 @@ const APIController = (function() {
     // START OF APP EXECUTION
     const app = express(); // use ExpressJS
     app.use('/styles', express.static(path.join(__dirname, 'styles'))); // use CSS files in the 'styles' directory
+    app.use('/images', express.static(path.join(__dirname, 'images'))); // use files in the 'images' directory
     app.set('view engine', 'ejs'); // use EJS files in the 'views' directory
 
     app.get('/', (req, res) => {
-        res.redirect('/login');
+        res.render("home.ejs", {});
     })
-
 
     // login page - redirects to spotify login
     app.get('/login', (req, res) => {
@@ -250,16 +250,12 @@ const APIController = (function() {
                     res.send("Failed to get access token");
                 }
                 else {
-                    res.redirect("/home"); // once successfully authenticated, take user to home page
+                    res.redirect("/list"); // once successfully authenticated, take user to list page
                 }
             }
         } else {
             res.send("Authentication Failed - States did not match.");
         }
-    });
-
-    app.get('/home', (req, res) => {
-        res.redirect("/list");
     });
 
     app.get('/list', async (req, res, next) => {
