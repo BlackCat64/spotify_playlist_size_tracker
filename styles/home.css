@@ -73,3 +73,34 @@ h1 {
     display: inline-block;
     vertical-align: middle;
 }
+
+.login {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-60%, -50%);
+}
+
+.login button {
+    background-color: #1ed760;
+    border: 5px solid #1ed760;
+    border-radius: 40px;
+    padding: 16px 40px;
+}
+
+.login button img {
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.login button span {
+    margin-left: 10px;
+    color: #000;
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: x-large;
+    display: inline-block;
+    vertical-align: middle;
+}
