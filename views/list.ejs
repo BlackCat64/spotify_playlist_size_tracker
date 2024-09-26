@@ -21,11 +21,13 @@
         <% } %>
 
         <% for (var i = 0; i < playlists.length; i++) { %>
-            <tr click-url="/display?id=<%= playlists[i].id %>">
-                <td class="images"><img src=<%= playlists[i].images[0].url %>></td>
-                <td class="list_names"><%= playlists[i].name %></td>
-                <td class="num_songs"><%= playlists[i].tracks.total %> Song<%= (playlists[i].tracks.total > 1) ? 's' : ''%></td>
-            </tr>
+            <% if (playlists[i].tracks.total > 0) { %>
+                <tr click-url="/display?id=<%= playlists[i].id %>">
+                    <td class="images"><img src=<%= playlists[i].images[0].url %>></td>
+                    <td class="list_names"><%= playlists[i].name %></td>
+                    <td class="num_songs"><%= playlists[i].tracks.total %> Song<%= (playlists[i].tracks.total > 1) ? 's' : ''%></td>
+                </tr>
+            <% } %>
         <% } %>
     </table>
 
