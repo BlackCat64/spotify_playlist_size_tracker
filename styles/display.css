@@ -61,6 +61,10 @@ h1, h2 {
     cursor: pointer;
 }
 
+#tracks_table th:hover {
+    background-color: rgb(44, 44, 44);
+}
+
 #tracks_table tr {
     font-weight: lighter;
 }
