@@ -21,9 +21,16 @@
 }
 
 .creator {
+    color: #ccf55e;
+    font-family: 'Inter', 'Arial', sans-serif;
     display: inline-block;
     padding: 10px;
     height: 60px;
+    transition: 0.2s ease-in-out;
+}
+
+.creator:hover {
+    color: #abce4e;
 }
 
 .icon {
@@ -36,8 +43,6 @@
 }
 
 .username {
-    color: #ccf55e;
-    font-family: 'Inter', 'Arial', sans-serif;
     display: inline-block;
     vertical-align: middle;
 }
