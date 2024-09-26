@@ -366,8 +366,14 @@ const APIController = (function() {
             chartData.push({x: Date.now(), y: (numTracks + 0.001)}); // make sure the size 'as of now' is displayed initially
             tooltipData.push({name: "Size as of Now", artists: numTracks});
 
+            let imageURL;
+            if (list.images) // if playlist has an image, get its URL
+                imageURL = list.images[0].url;
+            else imageURL = "https://misc.scdn.co/liked-songs/liked-songs-64.png"; // otherwise, use Liked Songs image
+
             res.render("display.ejs", {
                 list_name: list.name || "Liked Songs",
+                img_url: imageURL,
                 list_id: req.query.id,
                 display_data: displayData,
                 tooltip_data: tooltipData,
