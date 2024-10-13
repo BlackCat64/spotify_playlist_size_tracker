@@ -50,13 +50,14 @@
         <h2>Tracks:</h2>
         <table id="tracks_table">
             <tr>
-                <th title="Click to Sort by Track No." onClick="sortTable(0)">#</th>
+                <th title="Click to Sort by Track No." onClick="sortTable(0, true)">#</th>
                 <th title="Click to Sort Alphabetically by Track Name" onClick="sortTable(1)">Track</th>
                 <th title="Click to Sort Alphabetically by Artist Name" colspan="<%= max_artists %>" onClick="sortTable(2)">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
                 <th title="Click to Sort Alphabetically by Album Name" onClick="sortTable(<%= max_artists + 2 %>)">Album</th>
                 <th title="Click to Sort by Date Added" onClick="sortTable(<%= max_artists + 3 %>)">Date Added</th>
                 <th title="Click to Sort by Release Date" onClick="sortTable(<%= max_artists + 4 %>)">Release Date</th>
                 <th title="Click to Sort by Duration" onClick="sortTable(<%= max_artists + 5 %>)">Duration</th>
+                <th title="Click to Sort by Tempo" onClick="sortTable(<%= max_artists + 6 %>, true)">Tempo</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
@@ -72,6 +73,7 @@
                 <td><%= display_data[i].date_added %></td>
                 <td><%= display_data[i].release_date %></td>
                 <td><%- display_data[i].duration %></td>
+                <td><%- display_data[i].tempo %></td>
             </tr>
         <% } %>
         </table>
@@ -121,7 +123,7 @@
         // if negative, it is in DESCENDING order
         // if positive, it is in ASCENDING order
 
-        const TABLE_HEADINGS = ["#", "Track", "Artists", "Album", "Date Added", "Release Date", "Duration"];
+        const TABLE_HEADINGS = ["#", "Track", "Artists", "Album", "Date Added", "Release Date", "Duration", "Tempo (BPM)"];
 
         // get document elements
         const canvas = document.getElementById('chart');
@@ -305,7 +307,7 @@
             location.reload();
         });
 
-        function sortTable(columnIndex) {
+        function sortTable(columnIndex, numeric=false) {
             const table = document.getElementById("tracks_table");
             const headings = table.rows[0];
             const rows = Array.from(table.rows).slice(1); // Get all rows except the header
@@ -329,7 +331,7 @@
                 let cellA = rowA.cells[indexToSort].innerText.toLowerCase();
                 let cellB = rowB.cells[indexToSort].innerText.toLowerCase();
 
-                if (indexToSort === 0) { // for the '#' column, sort numerically, not alphabetically
+                if (numeric) { // for the '#' column, sort numerically, not alphabetically
                     cellA = parseInt(cellA);
                     cellB = parseInt(cellB);
                 }
