@@ -113,26 +113,22 @@ const APIController = (function() {
     }
 
     const getPlaylistTracks = async (listID) => {
-        const fetchLimit = 100;
-        let offset = 0;
+        const fetchLimit = 50;
         let allTracks = [];
-        let continueFetch = true;
-        const listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/tracks`;
+        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/tracks`;
+        listURL = listURL + "?limit=50";
 
-        // continue fetching batches of 100 tracks, until there are no more left
-        while (continueFetch) {
-            const result = await fetch(apiBaseURL + listURL + `?offset=${offset}`, {
+        // continue fetching batches of tracks, until there are no more left (until data.next is null)
+        while (listURL) {
+            const result = await fetch(apiBaseURL + listURL, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${session.access_token}`}
             });
-
+``
             if (result.ok) {
                 const data = await result.json();
                 allTracks = allTracks.concat(data.items);
-                offset += data.items.length;
-
-                if (data.items.length < fetchLimit)
-                    continueFetch = false;
+                listURL = data.next;
             }
             else return result.json(); // return error JSON object, if fetching the playlist tracks fails
         }
@@ -154,7 +150,7 @@ const APIController = (function() {
         for (let artist of track.artists) { // add the URL of each artist to an array
             arr.push(getArtistURL(artist));
         }
-        if (arr[0] === "")
+        if (!track.artists || !arr || !arr[0])
             arr[0] = "Unknown"; // account for songs with no artists given
         return arr;
     }
