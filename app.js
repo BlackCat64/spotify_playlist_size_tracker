@@ -412,10 +412,11 @@ const APIController = (function() {
                 trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
 
                 for (let artist of track.track.artists) {
-                    if (artistCount.has(artist.name)) {
-                        artistCount.set(artist.name, artistCount.get(artist.name) + 1);
+                    if (artist && artist.name) {
+                        if (artistCount.has(artist.name)) {
+                            artistCount.set(artist.name, artistCount.get(artist.name) + 1);
+                        } else artistCount.set(artist.name, 1);
                     }
-                    else artistCount.set(artist.name, 1);
                 }
             }
             let maxArtist= {
