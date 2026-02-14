@@ -54,10 +54,9 @@
                 <th title="Click to Sort Alphabetically by Track Name" onClick="sortTable(1)">Track</th>
                 <th title="Click to Sort Alphabetically by Artist Name" colspan="<%= max_artists %>" onClick="sortTable(2)">Artists</th> <!-- Dynamic column width, depending on max no. of artists -->
                 <th title="Click to Sort Alphabetically by Album Name" onClick="sortTable(<%= max_artists + 2 %>)">Album</th>
-                <th title="Click to Sort by Date Added" onClick="sortTable(<%= max_artists + 3 %>)">Date Added</th>
+                <th title="Click to Sort by Date Added" onClick="sortTable(0, true)">Date Added</th>
                 <th title="Click to Sort by Release Date" onClick="sortTable(<%= max_artists + 4 %>)">Release Date</th>
                 <th title="Click to Sort by Duration" onClick="sortTable(<%= max_artists + 5 %>)">Duration</th>
-                <th title="Click to Sort by Tempo" onClick="sortTable(<%= max_artists + 6 %>, true)">Tempo</th>
             </tr>
         <% for (var i = 0; i < display_data.length; i++) { %>
             <tr>
@@ -73,7 +72,6 @@
                 <td><%= display_data[i].date_added %></td>
                 <td><%= display_data[i].release_date %></td>
                 <td><%- display_data[i].duration %></td>
-                <td><%- display_data[i].tempo %></td>
             </tr>
         <% } %>
         </table>
@@ -123,7 +121,7 @@
         // if negative, it is in DESCENDING order
         // if positive, it is in ASCENDING order
 
-        const TABLE_HEADINGS = ["#", "Track", "Artists", "Album", "Date Added", "Release Date", "Duration", "Tempo (BPM)"];
+        const TABLE_HEADINGS = ["#", "Track", "Artists", "Album", "Date Added", "Release Date", "Duration"];
 
         // get document elements
         const canvas = document.getElementById('chart');

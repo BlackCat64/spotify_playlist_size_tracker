@@ -13,8 +13,8 @@ const APIController = (function() {
         expires_at: undefined
     }
 
-    const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
-    // const redirectURI = "http://localhost:5000/callback";
+    // const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
+    const redirectURI = "http://127.0.0.1:5000/callback";
     const authURL = "https://accounts.spotify.com/authorize";
     const tokenURL = "https://accounts.spotify.com/api/token";
     const apiBaseURL = "https://api.spotify.com/v1/";
@@ -138,15 +138,6 @@ const APIController = (function() {
         }
 
         return allTracks; // return object containing list of tracks
-    }
-
-    const getTrackAudioFeatures = async (trackID) => {
-        // https://api.spotify.com/v1/audio-features/{id}
-        const result = await fetch(apiBaseURL + "audio-features/" + trackID, {
-            method: 'GET',
-            headers: {'Authorization': `Bearer ${session.access_token}`}
-        });
-        return await result.json();
     }
 
     const getTrackArtistsArray = (track) => { // returns an array of a track's artists, in the form of URLs to their pages on Spotify
@@ -397,7 +388,6 @@ const APIController = (function() {
                     date_added: formatTimestamp(track.added_at),
                     release_date: getTrackReleaseDate(track.track),
                     duration: formatDuration(track.track.duration_ms),
-                    tempo: (await getTrackAudioFeatures(track.track.id)).tempo
                 };
                 tooltipData[i] = { // prepare data for point hover tooltips
                     name: track.track.name,
