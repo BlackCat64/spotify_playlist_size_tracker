@@ -148,15 +148,19 @@ const APIController = (function() {
 
     const getTrackArtistsArray = (track) => { // returns an array of a track's artists, in the form of URLs to their pages on Spotify
         let arr = [];
-        for (let artist of track.artists) { // add the URL of each artist to an array
-            arr.push(getArtistURL(artist));
+        if (track) {
+            for (let artist of track.artists) { // add the URL of each artist to an array
+                arr.push(getArtistURL(artist));
+            }
+            if (!track.artists || !arr || !arr[0])
+                arr[0] = "Unknown"; // account for songs with no artists given
         }
-        if (!track.artists || !arr || !arr[0])
-            arr[0] = "Unknown"; // account for songs with no artists given
         return arr;
     }
 
     const getTrackArtistsString = (track) => { // returns a comma-separated list of a track's artists
+        if (!track)
+            return "";
         let str = "";
         for (let artist of track.artists) {
             str += `${artist.name}, `;
@@ -167,18 +171,24 @@ const APIController = (function() {
     }
 
     const getArtistURL = (artist) => {
+        if (!artist)
+            return "about:blank";
         if (!artist.id) // if the artist is not known on Spotify, do not show a URL
             return artist.name;
         return `<a href="https://open.spotify.com/artist/${artist.id}" target="_blank" title="View ${artist.name} on Spotify">${artist.name}</a>`;
     }
 
     const getTrackURL = (track) => {
+        if (!track)
+            return "about:blank";
         if (!track.id) // if the track is not known on Spotify, do not show a URL
             return track.name;
         return `<a href="https://open.spotify.com/track/${track.id}" target="_blank" title="Listen on Spotify">${track.name}</a>`;
     }
 
     const getTrackAlbumURL = (track) => {
+        if (!track)
+            return "about:blank";
         const album = track.album;
         if (!album.id) // account for albums unknown to Spotify
             return (album.name.length > 0) ? album.name : "Unknown";
@@ -187,6 +197,8 @@ const APIController = (function() {
     }
 
     const getTrackReleaseDate = (track) => {
+        if (!track)
+            return "";
         const album = track.album;
         if (!album.id || !album.release_date)
             return "Unknown"; // release date is only available if the track's album is on Spotify
