@@ -119,6 +119,8 @@ const APIController = (function() {
 
         // continue fetching batches of tracks, until there are no more left (until data.next is null)
         while (listURL) {
+            console.log(listURL); // DEBUG
+
             const result = await fetch(apiBaseURL + listURL, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${session.access_token}`}
@@ -294,7 +296,7 @@ const APIController = (function() {
                 return; // ALWAYS RETURN after using res, to avoid header errors!
             }
 
-            const likedSongs = await getPlaylist('me');
+            const likedSongs = await getPlaylistTracks('me');
             if (likedSongs.error) {
                 res.redirect('/error?' + querystring.stringify({
                     code: likedSongs.error.status || 500,
@@ -302,7 +304,7 @@ const APIController = (function() {
                 }));
                 return;
             }
-            const numLikedSongs = likedSongs.items.length; // Get the number of Liked Songs the user has
+            const numLikedSongs = likedSongs.length; // Get the number of Liked Songs the user has
 
             res.render("list.ejs", {playlists: playlists.items, num_liked_songs: numLikedSongs}); // render html (dynamically)
         }
