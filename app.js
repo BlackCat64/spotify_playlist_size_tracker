@@ -191,7 +191,7 @@ const APIController = (function() {
 
     const getTrackReleaseDate = (track) => {
         const album = track.album;
-        if (!album.id)
+        if (!album.id || !album.release_date)
             return "Unknown"; // release date is only available if the track's album is on Spotify
 
         return formatIncompleteDate(album.release_date); // format the date
