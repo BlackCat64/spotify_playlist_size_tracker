@@ -113,9 +113,8 @@ const APIController = (function() {
     }
 
     const getPlaylistTracks = async (listID) => {
-        const fetchLimit = 50;
         let allTracks = [];
-        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/tracks`;
+        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/items`;
         listURL = listURL + "?limit=50";
 
         // continue fetching batches of tracks, until there are no more left (until data.next is null)
@@ -124,7 +123,7 @@ const APIController = (function() {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${session.access_token}`}
             });
-``
+
             if (result.ok) {
                 const data = await result.json();
                 allTracks = allTracks.concat(data.items);
