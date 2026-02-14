@@ -351,8 +351,8 @@ const APIController = (function() {
             let tracks = await getPlaylistTracks(req.query.id); // get that playlist's tracks
             if (tracks.error) {
                 res.redirect('/error?' + querystring.stringify({
-                    code: list.error.status || 500,
-                    detail: list.error.message
+                    code: tracks.error.status || 500,
+                    detail: tracks.error.message
                 }));
                 return;
             }
