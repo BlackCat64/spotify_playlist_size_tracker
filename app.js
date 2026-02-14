@@ -94,7 +94,22 @@ const APIController = (function() {
             method: 'GET',
             headers: {'Authorization': `Bearer ${session.access_token}`}
         });
-        return await result.json();
+
+        const text = await result.text();
+
+        if (!result.ok) {
+            return result.json();
+        }
+
+        try {
+            return JSON.parse(text);
+        }
+        catch (err) {
+            const e = new Error();
+            e.status = result.status;
+            e.message = text;
+            throw e;
+        }
     }
 
     const getPlaylistTracks = async (listID) => {
@@ -309,11 +324,21 @@ const APIController = (function() {
                 return;
             }
 
-            const list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
-            if (list.error) {
+            let list;
+            try {
+                list = await getPlaylist(req.query.id); // get playlist with the passed ID query parameter
+
+                if (list.error) {
+                    const e = new Error();
+                    e.status = list.error.status;
+                    e.message = list.error.message;
+                    throw e;
+                }
+            }
+            catch (err) {
                 res.redirect('/error?' + querystring.stringify({
-                    code: list.error.status || 500,
-                    detail: list.error.message
+                    code: err.status || 500,
+                    detail: err.message
                 }));
                 return;
             }
@@ -452,7 +477,7 @@ const APIController = (function() {
 
     // redirect to Error 500 page whenever the program encounters an exception
     app.use((err, req, res, next) => {
-        console.log(err.stack || "No stack trace available.");
+        console.error(err.stack || "No stack trace available.");
 
         const errorMessage = err.message || "Unknown Error.";
         res.redirect(`/error?code=500&detail=${encodeURIComponent(errorMessage)}`);
