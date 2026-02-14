@@ -113,15 +113,15 @@ const APIController = (function() {
     }
 
     const getPlaylistTracks = async (listID) => {
+        const fetchLimit = 50;
+        let offset = 0;
         let allTracks = [];
-        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/items`;
-        listURL = listURL + "?limit=50";
+        let continueFetch = true;
+        const listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}/tracks`;
 
-        // continue fetching batches of tracks, until there are no more left (until data.next is null)
-        while (listURL) {
-            console.log(listURL); // DEBUG
-
-            const result = await fetch(apiBaseURL + listURL, {
+        // continue fetching batches of 100 tracks, until there are no more left
+        while (continueFetch) {
+            const result = await fetch(apiBaseURL + listURL + `?offset=${offset}&limit=${fetchLimit}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${session.access_token}`}
             });
@@ -129,7 +129,10 @@ const APIController = (function() {
             if (result.ok) {
                 const data = await result.json();
                 allTracks = allTracks.concat(data.items);
-                listURL = data.next;
+                offset += data.items.length;
+
+                if (data.items.length < fetchLimit)
+                    continueFetch = false;
             }
             else return result.json(); // return error JSON object, if fetching the playlist tracks fails
         }
