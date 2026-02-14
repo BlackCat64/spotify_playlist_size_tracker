@@ -24,7 +24,7 @@ h1, h2 {
     border-radius: 6px;
 }
 
-#chart_controls_title {
+.chart_controls_title {
     margin: 5px;
 }
 

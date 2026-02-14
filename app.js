@@ -13,8 +13,8 @@ const APIController = (function() {
         expires_at: undefined
     }
 
-    // const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
-    const redirectURI = "http://127.0.0.1:5000/callback";
+    const redirectURI = "https://spotify-playlist-size-tracker.onrender.com/callback";
+    // const redirectURI = "http://127.0.0.1:5000/callback";
     const authURL = "https://accounts.spotify.com/authorize";
     const tokenURL = "https://accounts.spotify.com/api/token";
     const apiBaseURL = "https://api.spotify.com/v1/";
@@ -231,6 +231,16 @@ const APIController = (function() {
         return mins.toString() + ":" + seconds.toString().padStart(2, "0");
     }
 
+    const getAvgSongsAddedPerMonth = (tracksData) => {
+        let min_date = new Date(tracksData[0].x);
+        let max_date = new Date(tracksData[tracksData.length - 1].x);
+
+        let timeDiff = (new Date()) - min_date;
+        let months = timeDiff / (1000 * 60 * 60 * 24 * 30.44);
+
+        return (tracksData.length / months).toFixed(2);
+    }
+
     // START OF APP EXECUTION
     const app = express(); // use ExpressJS
     app.use('/styles', express.static(path.join(__dirname, 'styles'))); // use CSS files in the 'styles' directory
@@ -377,7 +387,9 @@ const APIController = (function() {
             let displayData = new Array(numTracks);
             let tooltipData = new Array(numTracks);
             let chartData = new Array(numTracks);
-            let trackLinks = new Array(numTracks)
+            let trackLinks = new Array(numTracks);
+
+            let artistCount = new Map();
 
             for (let i = 0; i < numTracks; i++) {
                 let track = tracks[i];
@@ -398,7 +410,24 @@ const APIController = (function() {
                     y: (i + 1)
                 };
                 trackLinks[i] = `https://open.spotify.com/track/${track.track.id}`; // prepare clickable links
+
+                for (let artist of track.track.artists) {
+                    if (artistCount.has(artist.name)) {
+                        artistCount.set(artist.name, artistCount.get(artist.name) + 1);
+                    }
+                    else artistCount.set(artist.name, 1);
+                }
             }
+            let maxArtist= {
+                name: "",
+                count: 0
+            };
+            artistCount.forEach((count, artist) => { // find the most common artist in the playlist
+                if (count > maxArtist.count) {
+                    maxArtist.name = artist;
+                    maxArtist.count = count;
+                }
+            });
 
             chartData.push({x: Date.now(), y: (numTracks + 0.001)}); // make sure the size 'as of now' is displayed initially
             tooltipData.push({name: "Size as of Now", artists: numTracks});
@@ -417,7 +446,11 @@ const APIController = (function() {
                 track_links: trackLinks,
                 num_tracks: numTracks,
                 chart_data: chartData,
-                max_artists: Math.max(...displayData.map(track => track.artists.length)) // calculate the highest no. of artists that any song has
+                max_artists: Math.max(...displayData.map(track => track.artists.length)), // calculate the highest no. of artists that any song has
+                stats: {
+                    avg_songs_per_month: getAvgSongsAddedPerMonth(chartData),
+                    most_common_artist: maxArtist
+                }
             });
         }
         catch (err) {
