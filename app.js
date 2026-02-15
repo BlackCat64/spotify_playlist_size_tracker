@@ -32,7 +32,7 @@ const APIController = (function() {
                 redirect_uri: redirectURI
             }).toString()
         });
-        return await result.json(); // return the JSON object containing the access & refresh tokens
+        return getJSONFromResult(result); // return the JSON object containing the access & refresh tokens
     }
 
     const refreshToken = async () => { // refreshes the access token, using a refresh token
@@ -47,7 +47,7 @@ const APIController = (function() {
                 refresh_token: session.refresh_token
             }).toString()
         });
-        return await result.json(); // return the JSON object containing the NEW access & refresh tokens
+        return getJSONFromResult(result); // return the JSON object containing the NEW access & refresh tokens
     }
 
     const checkSession = async () => { // returns true if there is a valid session, and false otherwise
@@ -78,23 +78,7 @@ const APIController = (function() {
         return result;
     };
 
-    const getUserPlaylists = async () => {
-        const result = await fetch(apiBaseURL + `me/playlists`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${session.access_token}`}
-        });
-        return await result.json(); // return object containing list of playlists
-    }
-
-    const getPlaylist = async (listID) => {
-        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}`;
-        // if the passed ID parameter is 'me', then return the user's Liked Songs
-
-        const result = await fetch(apiBaseURL + listURL, {
-            method: 'GET',
-            headers: {'Authorization': `Bearer ${session.access_token}`}
-        });
-
+    const getJSONFromResult = async (result) => {
         const text = await result.text();
 
         if (!result.ok) {
@@ -110,6 +94,27 @@ const APIController = (function() {
             e.message = text;
             throw e;
         }
+    };
+
+    const getUserPlaylists = async () => {
+        const result = await fetch(apiBaseURL + `me/playlists`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${session.access_token}`}
+        });
+
+        return getJSONFromResult(result);
+    }
+
+    const getPlaylist = async (listID) => {
+        let listURL = (listID === "me") ? 'me/tracks' : `playlists/${listID}`;
+        // if the passed ID parameter is 'me', then return the user's Liked Songs
+
+        const result = await fetch(apiBaseURL + listURL, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${session.access_token}`}
+        });
+
+        return getJSONFromResult(result);
     }
 
     const getPlaylistTracks = async (listID) => {
@@ -134,7 +139,17 @@ const APIController = (function() {
                 if (data.items.length < fetchLimit)
                     continueFetch = false;
             }
-            else return result.json(); // return error JSON object, if fetching the playlist tracks fails
+            else {
+                try {
+                    return await result.json();
+                }
+                catch (err) {
+                    const e = new Error();
+                    e.status = result.status;
+                    e.message = await result.text();
+                    throw e;
+                }
+            }
         }
 
         return allTracks; // return object containing list of tracks
